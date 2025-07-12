@@ -52,7 +52,7 @@
         ];
         
         shellHook = ''
-          exec zsh
+          echo "Nix development environment loaded"
         '';
       };
     });
