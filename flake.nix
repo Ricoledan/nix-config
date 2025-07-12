@@ -40,6 +40,7 @@
           tree
           bat
           fd
+	  nix-direnv
           yt-dlp
           claude-code
 
