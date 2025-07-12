@@ -1,4 +1,5 @@
 brew "mas"
+brew "direnv"
 
 cask "ghostty"
 cask "adobe-creative-cloud"
