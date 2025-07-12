@@ -21,7 +21,7 @@ nix develop --command echo "Nix environment ready"
 # Install platform-specific packages
 if [[ "$OS" == "macOS" ]]; then
     echo "🍺 Installing Homebrew packages..."
-    brew bundle
+    brew bundle --no-upgrade
 elif [[ "$OS" == "Linux" ]]; then
     echo "🐧 Installing Ubuntu packages..."
     if [[ -f "install-ubuntu.sh" ]]; then
@@ -36,7 +36,7 @@ echo ""
 echo "Usage:"
 echo "  nix develop    # Enter Nix dev shell"
 if [[ "$OS" == "macOS" ]]; then
-    echo "  brew bundle    # Install/update Homebrew apps"
+    echo "  brew bundle --no-upgrade    # Install Homebrew apps without upgrading"
 else
     echo "  ./install-ubuntu.sh    # Install/update Ubuntu packages"
 fi
