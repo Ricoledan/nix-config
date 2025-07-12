@@ -16,6 +16,9 @@
     devShells = forAllSystems (system: {
       default = (pkgsFor system).mkShell {
         buildInputs = with (pkgsFor system); [
+          # Shell
+          zsh
+          
           # Version Control & Development
           git
           gh
@@ -46,6 +49,10 @@
           # Productivity
           obsidian
         ];
+        
+        shellHook = ''
+          exec zsh
+        '';
       };
     });
   };
