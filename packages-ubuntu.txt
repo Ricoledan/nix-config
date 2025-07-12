@@ -1,0 +1,16 @@
+# APT packages
+vlc
+curl
+git
+openssh-client
+
+# Snap packages (run with: snap install <package>)
+discord
+obsidian --classic
+code --classic
+1password --beta
+
+# Flatpak packages (run with: flatpak install <package>)
+org.mozilla.firefox
+org.videolan.VLC
+com.discordapp.Discord

@@ -1,40 +1,52 @@
 {
-  description = "Rico's personal development environment";
+  description = "Rico's personal Cross-platform Nix environment";
   
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   };
   
   outputs = { self, nixpkgs }: let
-    system = "aarch64-darwin";
-    pkgs = import nixpkgs {
+    systems = [ "aarch64-darwin" "x86_64-linux" ];
+    forAllSystems = nixpkgs.lib.genAttrs systems;
+    pkgsFor = system: import nixpkgs {
       inherit system;
-      config = {
-        allowUnfree = true;
-      };
+      config = { allowUnfree = true; };
     };
   in {
-    devShells.${system}.default = pkgs.mkShell {
-      buildInputs = with pkgs; [
-	_1password-cli
-	git
-	docker
-	docker-compose
-	vscode
-	obsidian
-	yt-dlp
-	jq
-	ripgrep
-	curl
-	nodejs_22
-	python3
-	gh
-	tree
-	bat
-	fd
-	claude-code
-	openssh	
-      ];
-    };
+    devShells = forAllSystems (system: {
+      default = (pkgsFor system).mkShell {
+        buildInputs = with (pkgsFor system); [
+          # Version Control & Development
+          git
+          gh
+          vscode
+          neovim
+
+          # Container & DevOps
+          docker
+          docker-compose
+
+          # Programming Languages & Runtimes
+          nodejs_22
+          python3
+
+          # CLI Utilities
+          jq
+          ripgrep
+          curl
+          tree
+          bat
+          fd
+          yt-dlp
+          claude-code
+
+          # System & Network
+          openssh
+
+          # Productivity
+          obsidian
+        ];
+      };
+    });
   };
 }
