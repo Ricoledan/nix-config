@@ -8,7 +8,6 @@ Cross-platform Nix + platform-specific package managers.
 # One-time setup
 ./setup.sh
 
-# Daily development
 nix develop
 ```
 
@@ -31,10 +30,10 @@ nix develop
 ./setup.sh                    # Detects platform, installs accordingly
 
 # Development  
-nix develop                   # Works on both macOS and Ubuntu
+nix develop
 
 # Updates
-nix flake update              # Update Nix packages (both systems)
+nix flake update              # Update Nix packages
 brew bundle                   # Update macOS apps
 sudo apt update && sudo apt upgrade  # Update Ubuntu packages
 ```

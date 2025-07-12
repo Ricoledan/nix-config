@@ -1,4 +1,3 @@
-# GUI Applications & macOS-specific tools
 cask "ghostty"
 cask "adobe-creative-cloud"
 cask "alfred"

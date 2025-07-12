@@ -15,7 +15,6 @@ fi
 
 echo "🖥️  Detected OS: $OS"
 
-# Install Nix packages (works on both)
 echo "📦 Installing Nix packages..."
 nix develop --command echo "Nix environment ready"
 
