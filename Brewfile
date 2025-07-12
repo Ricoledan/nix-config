@@ -1,3 +1,5 @@
+brew "mas"
+
 cask "ghostty"
 cask "adobe-creative-cloud"
 cask "alfred"
@@ -13,3 +15,5 @@ cask "jetbrains-toolbox"
 cask "fantastical"
 cask "todoist"
 cask "ghostty"
+
+mas "Magnet", id: 441258766
