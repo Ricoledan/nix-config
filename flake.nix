@@ -1,5 +1,5 @@
 {
-  description = "Rico's personal Cross-platform Nix environment";
+  description = "Rico's personal cross-platform Nix environment";
   
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
