@@ -46,9 +46,6 @@
 
           # System & Network
           openssh
-
-          # Productivity
-          obsidian
         ];
         
         shellHook = ''
