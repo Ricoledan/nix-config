@@ -12,10 +12,10 @@ cask "plex"
 cask "obsidian"
 cask "vlc"
 cask "1password"
-cask "cleanmymac"
 cask "jetbrains-toolbox"
 cask "fantastical"
 cask "todoist"
 
 mas "Magnet", id: 441258766
 mas "Bear", id: 1091189122
+mas "CleanMyMac", id: 1339170533
