@@ -1,5 +1,6 @@
 brew "mas"
 brew "direnv"
+brew "powerlevel10k"
 
 cask "ghostty"
 cask "adobe-creative-cloud"
