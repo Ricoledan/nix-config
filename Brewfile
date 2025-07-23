@@ -13,6 +13,8 @@ cask "1password"
 cask "jetbrains-toolbox"
 cask "fantastical"
 cask "todoist"
+cask "notion"
+cask "zotero"
 
 mas "Magnet", id: 441258766
 mas "Bear", id: 1091189122
