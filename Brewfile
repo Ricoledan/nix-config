@@ -1,6 +1,5 @@
 brew "mas"
 brew "direnv"
-cask "font-fira-code"
 
 cask "ghostty"
 cask "adobe-creative-cloud"
@@ -18,6 +17,7 @@ cask "notion"
 cask "zotero"
 cask "caffeine"
 cask "claude-code"
+cask "font-fira-code"
 
 mas "Magnet", id: 441258766
 mas "Bear", id: 1091189122
