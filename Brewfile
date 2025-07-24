@@ -1,5 +1,6 @@
 brew "mas"
 brew "direnv"
+brew "font-fira-code"
 
 cask "ghostty"
 cask "adobe-creative-cloud"
