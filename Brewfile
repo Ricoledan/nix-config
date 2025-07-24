@@ -15,6 +15,7 @@ cask "fantastical"
 cask "todoist"
 cask "notion"
 cask "zotero"
+cask "caffeine"
 
 mas "Magnet", id: 441258766
 mas "Bear", id: 1091189122
