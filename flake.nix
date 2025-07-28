@@ -3,9 +3,13 @@
   
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   
-  outputs = { self, nixpkgs }: let
+  outputs = { self, nixpkgs, home-manager }: let
     systems = [ "aarch64-darwin" "x86_64-linux" ];
     forAllSystems = nixpkgs.lib.genAttrs systems;
     pkgsFor = system: import nixpkgs {
@@ -40,7 +44,7 @@
           tree
           bat
           fd
-	  nix-direnv
+	        nix-direnv
           yt-dlp
           claude-code
 
@@ -53,5 +57,17 @@
         '';
       };
     });
+
+    homeConfigurations = {
+      "ricoledan@aarch64-darwin" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgsFor "aarch64-darwin";
+        modules = [ ./home/home.nix ];
+      };
+
+      "ricoledan@x86_64-linux" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgsFor "x86_64-linux";
+        modules = [ ./home/home.nix ];
+      };
+    };
   };
 }
