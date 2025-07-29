@@ -17,44 +17,157 @@ home-manager switch --flake .#ricoledan@aarch64-darwin  # macOS
 home-manager switch --flake .#ricoledan@x86_64-linux     # Linux
 ```
 
-## Strategy
+## Components Overview
 
-- **Nix** (flake.nix): Cross-platform CLI tools, dev environments
-- **Home Manager** (home/home.nix): User-specific configurations and dotfiles
-- **macOS**: Homebrew GUI apps (Brewfile)
-- **Ubuntu**: APT for system packages, Snap/Flatpak for GUI apps
+### Core Technologies
+- **Nix Flakes**: Reproducible, declarative package management
+- **Home Manager**: User environment and dotfile management
+- **Homebrew** (macOS): GUI applications and system packages
+- **Oh My Zsh + Powerlevel10k**: Enhanced terminal experience
+- **Direnv**: Automatic environment loading
 
-## Files
+### Development Tools (via Nix)
+- **Editors**: VSCode, Neovim
+- **Version Control**: Git, GitHub CLI (gh)
+- **Containers**: Docker, Docker Compose
+- **Languages**: Node.js 22, Python 3
+- **CLI Tools**: 
+  - Text processing: jq, ripgrep, bat, fd
+  - System utilities: curl, tree, openssh
+  - Media: yt-dlp
+  - AI: claude-code
 
-- `flake.nix` - Cross-platform Nix dev shell and Home Manager configurations
-- `home/home.nix` - Home Manager configuration for user-specific settings
-- `Brewfile` - macOS GUI applications (Homebrew)
-- `setup.sh` - Platform-aware setup script
+### Shell Configuration
+- **Zsh** with:
+  - Oh My Zsh (git, docker plugins)
+  - Powerlevel10k theme
+  - Syntax highlighting
+  - Auto-suggestions
+  - Custom aliases (ll, gs, gc, gp)
+  - 10k line history
+  - Fastfetch on startup
 
-## Commands
+### macOS Applications (via Homebrew)
+- **Development**: Ghostty (terminal), JetBrains Toolbox
+- **Productivity**: Alfred, Todoist, Fantastical, Notion, Bear, Obsidian
+- **Utilities**: 1Password, Magnet, CleanMyMac, Caffeine
+- **Media**: Plex, VLC
+- **Communication**: Discord
+- **Creative**: Adobe Creative Cloud
+- **Research**: Zotero
+- **Browser**: Zen Browser
 
+## Common Workflows
+
+### Daily Development
 ```bash
-# Setup
-./setup.sh                    # Detects platform, installs accordingly
+# Start your day - enter the development environment
+nix develop
 
-# Development  
-nix develop                   # Enter development shell
-
-# Home Manager
-home-manager switch --flake . # Apply Home Manager configuration
-
-# Updates
-nix flake update              # Update Nix packages
-brew bundle                   # Update macOS apps
-sudo apt update && sudo apt upgrade  # Update Ubuntu packages
+# Your shell will have all tools available
+# Fastfetch runs automatically on first shell
 ```
 
-## Platform Distribution
+### Making Configuration Changes
+```bash
+# Edit configuration files
+vim home/home.nix              # Home Manager config
+vim home/modules/packages.nix  # Nix packages
+vim home/modules/zsh.nix       # Shell config
+vim Brewfile                   # macOS apps
 
-**Both Systems (Nix)**: git, docker, nodejs, python, CLI utilities  
-**macOS (Homebrew)**: ghostty, alfred, discord, creative apps  
-**Ubuntu (APT/Snap)**: GUI apps, system packages
+# Apply changes
+home-manager switch --flake .#ricoledan@aarch64-darwin
 
-## Cross-Platform Usage
+# For Brewfile changes
+brew bundle
+```
 
-Same `nix develop` command works on both macOS and Ubuntu. Platform-specific GUI apps handled by native package managers.
+### Updating Packages
+```bash
+# Update all Nix packages
+nix flake update
+home-manager switch --flake .#ricoledan@aarch64-darwin
+
+# Update Homebrew packages
+brew update && brew upgrade
+brew bundle  # Ensure Brewfile apps are installed
+```
+
+### Adding New Tools
+```bash
+# For CLI tools (cross-platform)
+# Edit flake.nix or home/modules/packages.nix
+# Add package name to the list
+
+# For macOS GUI apps
+# Edit Brewfile
+# Add: cask "app-name"
+# Run: brew bundle
+```
+
+## File Structure
+
+```
+.
+├── flake.nix                 # Main Nix configuration
+├── flake.lock               # Locked dependencies
+├── home/
+│   ├── home.nix            # Home Manager entry point
+│   └── modules/
+│       ├── packages.nix    # Nix packages for home
+│       ├── zsh.nix        # Shell configuration
+│       └── neovim.nix     # Neovim config (if present)
+├── dotfiles/
+│   └── .p10k.zsh          # Powerlevel10k config
+├── Brewfile               # macOS applications
+├── setup.sh              # Initial setup script
+└── README.md            # This file
+```
+
+## Troubleshooting
+
+### Zsh/P10k Issues
+```bash
+# Reconfigure p10k if needed
+p10k configure
+```
+
+### Nix Build Failures
+```bash
+# Clear Nix store and rebuild
+nix-collect-garbage -d
+nix flake update
+home-manager switch --flake .
+```
+
+### Environment Not Loading
+```bash
+# Ensure direnv is allowed
+direnv allow
+
+# Manually reload
+nix develop
+```
+
+### Missing Commands
+```bash
+# Check if in Nix shell
+which <command>
+
+# If not found, ensure you're in nix develop
+exit
+nix develop
+```
+
+## Platform-Specific Notes
+
+### macOS
+- Homebrew handles GUI applications
+- System Integrity Protection may affect some tools
+- Use `mas` for Mac App Store apps
+
+### Linux
+- GUI apps would use apt/snap/flatpak
+- Adjust home directory path in home.nix
+- Some macOS-specific tools won't be available
