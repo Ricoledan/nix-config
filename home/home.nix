@@ -66,7 +66,9 @@ in
     nix-direnv.enable = true;
   };
   
-  # Enable better shell integration
+  # Import zsh configuration
+  imports = [ ./modules/zsh.nix ];
+  
+  # Enable bash for compatibility
   programs.bash.enable = true;
-  programs.zsh.enable = true;
 }
