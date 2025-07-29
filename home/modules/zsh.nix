@@ -17,38 +17,39 @@
       ];
     };
     
-    # Initialize powerlevel10k instant prompt FIRST
-    initExtraFirst = ''
-      # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-      # Initialization code that may require console input (password prompts, [y/n]
-      # confirmations, etc.) must go above this block; everything else may go below.
-      if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-        source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-      fi
-    '';
-    
-    # Initialize other zsh features after instant prompt
-    initExtra = ''
-      # Source powerlevel10k theme
-      source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+    # Initialize zsh with powerlevel10k instant prompt first
+    initContent = lib.mkMerge [
+      (lib.mkBefore ''
+        # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+        # Initialization code that may require console input (password prompts, [y/n]
+        # confirmations, etc.) must go above this block; everything else may go below.
+        if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+          source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+        fi
+      '')
       
-      # Load p10k config if it exists
-      [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-      
-      # Docker completions
-      if [[ -d ~/.docker/completions ]]; then
-        fpath=(~/.docker/completions $fpath)
-      fi
-      
-      # 1Password CLI plugins
-      [[ -f ~/.config/op/plugins.sh ]] && source ~/.config/op/plugins.sh
-      
-      # Terraform completions
-      if command -v terraform &> /dev/null; then
-        autoload -U +X bashcompinit && bashcompinit
-        complete -o nospace -C $(which terraform) terraform
-      fi
-    '';
+      ''
+        # Source powerlevel10k theme
+        source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+        
+        # Load p10k config if it exists
+        [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+        
+        # Docker completions
+        if [[ -d ~/.docker/completions ]]; then
+          fpath=(~/.docker/completions $fpath)
+        fi
+        
+        # 1Password CLI plugins
+        [[ -f ~/.config/op/plugins.sh ]] && source ~/.config/op/plugins.sh
+        
+        # Terraform completions
+        if command -v terraform &> /dev/null; then
+          autoload -U +X bashcompinit && bashcompinit
+          complete -o nospace -C $(which terraform) terraform
+        fi
+      ''
+    ];
     
     # Run commands on login shell (after P10k instant prompt)
     loginExtra = ''
