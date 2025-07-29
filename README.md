@@ -129,8 +129,9 @@ brew bundle  # Ensure Brewfile apps are installed
 
 ### Zsh/P10k Issues
 ```bash
-# Reconfigure p10k if needed
-p10k configure
+# To modify p10k configuration:
+# Edit dotfiles/.p10k.zsh directly
+# Then rebuild: home-manager switch --flake .
 ```
 
 ### Nix Build Failures
