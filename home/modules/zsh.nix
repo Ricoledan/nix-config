@@ -43,9 +43,14 @@
         autoload -U +X bashcompinit && bashcompinit
         complete -o nospace -C $(which terraform) terraform
       fi
-      
+    '';
+    
+    # Run commands on login shell (after P10k instant prompt)
+    loginExtra = ''
       # Run fastfetch on startup
-      ${pkgs.fastfetch}/bin/fastfetch
+      if [[ $SHLVL -eq 1 ]]; then
+        ${pkgs.fastfetch}/bin/fastfetch
+      fi
     '';
     
     # History configuration
