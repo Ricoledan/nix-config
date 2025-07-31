@@ -17,8 +17,5 @@
     curl
     tree
     yt-dlp
-    
-    # Editors
-    neovim
   ];
 }

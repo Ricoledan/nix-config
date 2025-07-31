@@ -67,7 +67,10 @@ in
   };
   
   # Import zsh configuration
-  imports = [ ./modules/zsh.nix ];
+  imports = [ 
+    ./modules/zsh.nix
+    ./modules/neovim.nix
+  ];
   
   # Enable bash for compatibility
   programs.bash.enable = true;
