@@ -3,6 +3,9 @@
 {
   # CLI tools that should be available in home environment
   packages = with pkgs; [
+    # Nix Tools
+    home-manager
+    
     # Version Control
     git
     gh
