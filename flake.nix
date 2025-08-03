@@ -66,11 +66,6 @@
             pkgs = pkgsFor system;
             modules = [
               ./home/home.nix
-              {
-                # These will be overridden by extraSpecialArgs when running
-                home.username = "user";
-                home.homeDirectory = "/tmp";
-              }
             ];
             # Allow passing username and homeDirectory at runtime
             extraSpecialArgs = {
