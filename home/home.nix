@@ -5,9 +5,9 @@ let
 in
 {
   # Home Manager needs a bit of information about you and the paths it should
-  # manage.
-  home.username = "ricoledan";
-  home.homeDirectory = "/Users/ricoledan";
+  # manage. These will be overridden at runtime via environment variables.
+  home.username = builtins.getEnv "USER";
+  home.homeDirectory = builtins.getEnv "HOME";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -16,7 +16,7 @@ in
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "25.05"; # Please read the comment before changing.
+  home.stateVersion = "24.05"; # Please read the comment before changing.
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -54,7 +54,7 @@ in
   #  /etc/profiles/per-user/ricoledan/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "nvim";
   };
 
   # Let Home Manager install and manage itself.
@@ -63,6 +63,7 @@ in
   # Enable direnv for automatic environment loading
   programs.direnv = {
     enable = true;
+    enableZshIntegration = false; # We manually add this after P10k instant prompt
     nix-direnv.enable = true;
   };
   

@@ -1,6 +1,17 @@
 {
   description = "Rico's personal cross-platform Nix environment";
   
+  # Semantic versioning for this flake
+  # Update when making breaking changes, features, or fixes
+  nixConfig = {
+    extra-substituters = [
+      "https://cache.nixos.org"
+    ];
+    extra-trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    ];
+  };
+  
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     home-manager = {
@@ -17,57 +28,55 @@
       config = { allowUnfree = true; };
     };
   in {
+    # Formatter for `nix fmt`
+    formatter = forAllSystems (system: (pkgsFor system).nixpkgs-fmt);
+    
+    # Checks for `nix flake check`
+    checks = forAllSystems (system: {
+      format = (pkgsFor system).runCommand "check-format" {
+        buildInputs = [ (pkgsFor system).nixpkgs-fmt ];
+      } ''
+        nixpkgs-fmt --check ${./.}
+        touch $out
+      '';
+    });
+    # Development shells - minimal since packages are managed by home-manager
     devShells = forAllSystems (system: {
       default = (pkgsFor system).mkShell {
         buildInputs = with (pkgsFor system); [
-          # Shell
-          zsh
-          
-          # Version Control & Development
+          # Only essentials needed before home-manager is activated
           git
-          gh
-          vscode
-          neovim
-
-          # Container & DevOps
-          docker
-          docker-compose
-
-          # Programming Languages & Runtimes
-          nodejs_22
-          python3
-
-          # CLI Utilities
-          jq
-          ripgrep
-          curl
-          tree
-          bat
-          fd
-	        nix-direnv
-          yt-dlp
-          claude-code
-
-          # System & Network
-          openssh
+          nixpkgs-fmt
         ];
         
         shellHook = ''
           echo "Nix development environment loaded"
+          echo "Run './switch.sh' to activate home-manager configuration"
         '';
       };
     });
 
-    homeConfigurations = {
-      "ricoledan@aarch64-darwin" = home-manager.lib.homeManagerConfiguration {
-        pkgs = pkgsFor "aarch64-darwin";
-        modules = [ ./home/home.nix ];
+    # Create a generic homeConfiguration that works for any user
+    homeConfigurations = let
+      mkHomeConfig = system: home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgsFor system;
+        modules = [ 
+          ./home/home.nix
+          {
+            # These will be overridden by extraSpecialArgs when running
+            home.username = "user";
+            home.homeDirectory = "/tmp";
+          }
+        ];
+        # Allow passing username and homeDirectory at runtime
+        extraSpecialArgs = {
+          inherit system;
+        };
       };
-
-      "ricoledan@x86_64-linux" = home-manager.lib.homeManagerConfiguration {
-        pkgs = pkgsFor "x86_64-linux";
-        modules = [ ./home/home.nix ];
-      };
+    in {
+      # Generic configurations for each system
+      "user@aarch64-darwin" = mkHomeConfig "aarch64-darwin";
+      "user@x86_64-linux" = mkHomeConfig "x86_64-linux";
     };
   };
 }
