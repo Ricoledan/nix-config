@@ -1,6 +1,14 @@
 # Rico's Development Environment
 
-Cross-platform Nix + platform-specific package managers with Home Manager integration.
+Cross-platform Nix flake configuration with Home Manager integration, following best practices for maintainability and security.
+
+## Features
+
+- **Cross-platform**: Works seamlessly on macOS (aarch64) and Linux (x86_64)
+- **Declarative**: All configuration in code, fully reproducible
+- **Automated**: Update scripts, CI/CD integration, format checking
+- **Secure**: Built-in secret management guidelines
+- **Fast**: Optimized with Nix caches and direnv integration
 
 ## Quick Start
 
@@ -32,16 +40,20 @@ cd nix-config
 
 # 4. Enter development shell (optional, for development work)
 nix develop
+
+# 5. Allow direnv for automatic environment loading
+direnv allow
 ```
 
 ### What This Does
 1. **setup.sh**: Installs Homebrew (macOS only) and ensures Nix flakes are enabled
 2. **Home Manager activation**: 
    - Installs all packages defined in `home/modules/packages.nix`
-   - Configures Zsh with Oh My Zsh and Powerlevel10k
+   - Configures Zsh with Oh My Zsh and Powerlevel10k (with instant prompt)
    - Sets up Neovim with LazyVim
    - Applies all dotfiles and configurations
-3. **nix develop**: Provides a shell with development tools (optional)
+   - Enables direnv for automatic environment loading
+3. **nix develop**: Provides a minimal shell (git, nixpkgs-fmt) before Home Manager activation
 
 ## Components Overview
 
@@ -90,6 +102,38 @@ nix develop
 - **Research**: Zotero
 - **Browser**: Zen Browser
 
+## Automation & Maintenance
+
+### Update Dependencies
+```bash
+# Run the update script to update all flake inputs
+./update.sh
+```
+
+This script will:
+- Update nixpkgs and home-manager to latest versions
+- Show you what changed
+- Optionally commit the updates with detailed messages
+- Run flake checks to ensure everything works
+
+### Code Formatting
+```bash
+# Format all Nix files
+nix fmt
+
+# Check formatting without changes
+nix fmt -- --check
+```
+
+### Run Checks
+```bash
+# Run all flake checks
+nix flake check
+
+# Show flake metadata
+nix flake metadata
+```
+
 ## Common Workflows
 
 ### Daily Development
@@ -118,7 +162,10 @@ brew bundle
 
 ### Updating Packages
 ```bash
-# Update all Nix packages
+# Update all Nix packages (recommended method)
+./update.sh
+
+# Or manually:
 nix flake update
 ./switch.sh
 
@@ -143,18 +190,27 @@ brew bundle  # Ensure Brewfile apps are installed
 
 ```
 .
-├── flake.nix                 # Main Nix configuration
+├── flake.nix                 # Main Nix configuration with formatter & checks
 ├── flake.lock               # Locked dependencies
 ├── home/
 │   ├── home.nix            # Home Manager entry point
-│   └── modules/
-│       ├── packages.nix    # Nix packages for home
-│       ├── zsh.nix        # Shell configuration
-│       └── neovim.nix     # Neovim config (if present)
+│   ├── modules/
+│   │   ├── packages.nix    # Nix packages for home
+│   │   ├── zsh.nix        # Shell configuration with P10k
+│   │   └── neovim.nix     # Neovim config with LazyVim
+│   └── systems/
+│       └── default.nix    # System-specific configurations
 ├── dotfiles/
 │   └── .p10k.zsh          # Powerlevel10k config
+├── .github/
+│   └── workflows/
+│       └── check.yml      # CI/CD checks
 ├── Brewfile               # macOS applications
 ├── setup.sh              # Initial setup script
+├── switch.sh             # Apply configuration script
+├── update.sh             # Update automation script
+├── .envrc                # Direnv configuration
+├── .gitignore            # Includes .env for secrets
 └── README.md            # This file
 ```
 
@@ -215,6 +271,12 @@ nix develop
   - macOS Keychain
   - 1Password CLI: `op read "op://vault/item/field"`
 
+### Flake Configuration Trust
+When first using this flake, you'll be prompted to trust the cache configuration. Accept with:
+```bash
+nix flake metadata --accept-flake-config
+```
+
 ### Missing Commands
 ```bash
 # Check if in Nix shell
@@ -245,3 +307,13 @@ nix develop
 - No need to edit configuration files when switching between machines
 - Works seamlessly across different usernames and home directory locations
 - Just run `./switch.sh` on any machine
+
+## CI/CD Integration
+
+This repository includes GitHub Actions workflows that:
+- Run on every push to `main` and on pull requests
+- Check flake validity across macOS and Linux
+- Verify code formatting
+- Build the development shell for both platforms
+
+The CI uses [Determinate Systems' Nix actions](https://github.com/DeterminateSystems) for optimal performance.
