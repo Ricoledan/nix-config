@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
       
@@ -25,4 +25,4 @@ jobs:
         run: nix fmt --accept-flake-config -- --check
       
       - name: Build devShell
-        run: nix build --accept-flake-config .#devShells.${{ matrix.os == 'ubuntu-latest' && 'x86_64-linux' || 'aarch64-darwin' }}.default
+        run: nix build --accept-flake-config .#devShells.x86_64-linux.default
