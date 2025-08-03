@@ -4,18 +4,43 @@ Cross-platform Nix + platform-specific package managers with Home Manager integr
 
 ## Quick Start
 
+### Prerequisites
+- Nix installed (with flakes enabled)
+- Git installed
+
+### Initial Setup on a New Machine
+
 ```bash
-# One-time setup
+# 1. Clone this repository
+git clone https://github.com/ricoledan/nix-config.git
+cd nix-config
+
+# 2. Run initial setup (installs Homebrew on macOS)
 ./setup.sh
 
-# Enter development shell
-nix develop
+# 3. Install and activate Home Manager
+# If Home Manager is not installed, use:
+nix run home-manager/master -- switch --flake .#ricoledan@aarch64-darwin  # macOS (Apple Silicon)
+# or
+nix run home-manager/master -- switch --flake .#ricoledan@x86_64-linux     # Linux
 
-# Apply Home Manager configuration
+# For subsequent updates (after Home Manager is installed):
 home-manager switch --flake .#ricoledan@aarch64-darwin  # macOS
 # or
 home-manager switch --flake .#ricoledan@x86_64-linux     # Linux
+
+# 4. Enter development shell (optional, for development work)
+nix develop
 ```
+
+### What This Does
+1. **setup.sh**: Installs Homebrew (macOS only) and ensures Nix flakes are enabled
+2. **Home Manager activation**: 
+   - Installs all packages defined in `home/modules/packages.nix`
+   - Configures Zsh with Oh My Zsh and Powerlevel10k
+   - Sets up Neovim with LazyVim
+   - Applies all dotfiles and configurations
+3. **nix develop**: Provides a shell with development tools (optional)
 
 ## Components Overview
 
@@ -46,6 +71,13 @@ home-manager switch --flake .#ricoledan@x86_64-linux     # Linux
   - Custom aliases (ll, gs, gc, gp)
   - 10k line history
   - Fastfetch on startup
+
+### Editor Configuration
+- **Neovim** with:
+  - LazyVim distribution (full IDE experience)
+  - LSP support for multiple languages
+  - Auto-installed plugins via Nix
+  - Custom plugin support in `~/.config/nvim/lua/plugins/`
 
 ### macOS Applications (via Homebrew)
 - **Development**: Ghostty (terminal), JetBrains Toolbox
@@ -126,6 +158,26 @@ brew bundle  # Ensure Brewfile apps are installed
 ```
 
 ## Troubleshooting
+
+### Home Manager Not Found
+```bash
+# Use the nix run command to bootstrap Home Manager:
+nix run home-manager/master -- switch --flake .#ricoledan@aarch64-darwin
+```
+
+### LazyVim Not Working
+```bash
+# Clear Neovim cache and plugins
+rm -rf ~/.local/share/nvim
+rm -rf ~/.cache/nvim
+rm -rf ~/.config/nvim/lazy-lock.json
+
+# Rebuild Home Manager configuration
+home-manager switch --flake .#ricoledan@aarch64-darwin
+
+# Launch Neovim - LazyVim will auto-install
+nvim
+```
 
 ### Zsh/P10k Issues
 ```bash
