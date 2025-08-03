@@ -6,7 +6,7 @@
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
-    
+
     # Oh My Zsh configuration
     oh-my-zsh = {
       enable = true;
@@ -16,7 +16,7 @@
         "docker"
       ];
     };
-    
+
     # Initialize zsh with powerlevel10k instant prompt first
     initContent = lib.mkMerge [
       (lib.mkBefore ''
@@ -30,7 +30,7 @@
           source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
         fi
       '')
-      
+
       ''
         # Hook direnv after instant prompt to avoid console output issues
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
@@ -56,7 +56,7 @@
         fi
       ''
     ];
-    
+
     # Run commands on login shell (after P10k instant prompt)
     loginExtra = ''
       # Run fastfetch on startup
@@ -64,7 +64,7 @@
         ${pkgs.fastfetch}/bin/fastfetch
       fi
     '';
-    
+
     # History configuration
     history = {
       size = 10000;
@@ -74,13 +74,13 @@
       ignoreSpace = true;
       share = true;
     };
-    
+
     # Environment variables
     sessionVariables = {
       # Add any persistent environment variables here
       COMPOSE_BAKE = "true";
     };
-    
+
     # Aliases
     shellAliases = {
       # Add your custom aliases here
@@ -90,13 +90,13 @@
       gp = "git push";
     };
   };
-  
+
   # Additional packages needed for the zsh config
   home.packages = with pkgs; [
     zsh-powerlevel10k
     fastfetch
   ];
-  
+
   # Ensure p10k config persists
   home.file.".p10k.zsh" = {
     source = ../../dotfiles/.p10k.zsh;

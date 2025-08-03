@@ -59,20 +59,20 @@ in
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-  
+
   # Enable direnv for automatic environment loading
   programs.direnv = {
     enable = true;
     enableZshIntegration = false; # We manually add this after P10k instant prompt
     nix-direnv.enable = true;
   };
-  
+
   # Import zsh configuration
-  imports = [ 
+  imports = [
     ./modules/zsh.nix
     ./modules/neovim.nix
   ];
-  
+
   # Enable bash for compatibility
   programs.bash.enable = true;
 }

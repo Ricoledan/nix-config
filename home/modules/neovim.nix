@@ -69,12 +69,12 @@
       nil # Nix LSP
       nodePackages.typescript-language-server
       nodePackages.vscode-langservers-extracted # HTML, CSS, JSON, ESLint
-      
+
       # Formatters
       stylua
       nixpkgs-fmt
       nodePackages.prettier
-      
+
       # Tools
       ripgrep
       fd
@@ -142,7 +142,7 @@
 
   # Ensure .config/nvim directory exists for custom plugin configurations
   xdg.configFile."nvim/lua/plugins/.gitkeep".text = "";
-  
+
   # Add a simple custom plugin file as an example
   xdg.configFile."nvim/lua/plugins/example.lua".text = ''
     -- Example custom plugin configuration
