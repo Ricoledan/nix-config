@@ -204,6 +204,17 @@ direnv allow
 nix develop
 ```
 
+## Security Best Practices
+
+### Secret Management
+- **Never commit secrets** to this repository
+- Use environment variables for API keys and tokens
+- Store secrets in 1Password and use the CLI integration (already configured)
+- For persistent secrets, consider:
+  - `.env` files (git-ignored)
+  - macOS Keychain
+  - 1Password CLI: `op read "op://vault/item/field"`
+
 ### Missing Commands
 ```bash
 # Check if in Nix shell

@@ -1,4 +1,6 @@
 .direnv/
 result
 result-*
+.env
+.env.local
 
