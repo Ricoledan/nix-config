@@ -18,16 +18,17 @@ cd nix-config
 # 2. Run initial setup (installs Homebrew on macOS)
 ./setup.sh
 
-# 3. Install and activate Home Manager
-# If Home Manager is not installed, use:
-nix run home-manager/master -- switch --flake .#ricoledan@aarch64-darwin  # macOS (Apple Silicon)
-# or
-nix run home-manager/master -- switch --flake .#ricoledan@x86_64-linux     # Linux
+# 3. Apply the configuration (works for any user)
+./switch.sh
 
-# For subsequent updates (after Home Manager is installed):
-home-manager switch --flake .#ricoledan@aarch64-darwin  # macOS
-# or
-home-manager switch --flake .#ricoledan@x86_64-linux     # Linux
+# The switch.sh script automatically:
+# - Detects your username ($USER)
+# - Detects your home directory ($HOME)
+# - Detects your system architecture
+# - Applies the configuration
+
+# For manual runs, use:
+# nix run home-manager/master -- switch --flake .#user@$(nix eval --impure --expr 'builtins.currentSystem' --raw) --impure
 
 # 4. Enter development shell (optional, for development work)
 nix develop
@@ -109,7 +110,7 @@ vim home/modules/zsh.nix       # Shell config
 vim Brewfile                   # macOS apps
 
 # Apply changes
-home-manager switch --flake .#ricoledan@aarch64-darwin
+./switch.sh
 
 # For Brewfile changes
 brew bundle
@@ -119,7 +120,7 @@ brew bundle
 ```bash
 # Update all Nix packages
 nix flake update
-home-manager switch --flake .#ricoledan@aarch64-darwin
+./switch.sh
 
 # Update Homebrew packages
 brew update && brew upgrade
@@ -161,8 +162,8 @@ brew bundle  # Ensure Brewfile apps are installed
 
 ### Home Manager Not Found
 ```bash
-# Use the nix run command to bootstrap Home Manager:
-nix run home-manager/master -- switch --flake .#ricoledan@aarch64-darwin
+# Run the switch script:
+./switch.sh
 ```
 
 ### LazyVim Not Working
@@ -173,7 +174,7 @@ rm -rf ~/.cache/nvim
 rm -rf ~/.config/nvim/lazy-lock.json
 
 # Rebuild Home Manager configuration
-home-manager switch --flake .#ricoledan@aarch64-darwin
+./switch.sh
 
 # Launch Neovim - LazyVim will auto-install
 nvim
@@ -183,7 +184,7 @@ nvim
 ```bash
 # To modify p10k configuration:
 # Edit dotfiles/.p10k.zsh directly
-# Then rebuild: home-manager switch --flake .
+# Then rebuild: ./switch.sh
 ```
 
 ### Nix Build Failures
@@ -191,7 +192,7 @@ nvim
 # Clear Nix store and rebuild
 nix-collect-garbage -d
 nix flake update
-home-manager switch --flake .
+./switch.sh
 ```
 
 ### Environment Not Loading
@@ -222,5 +223,14 @@ nix develop
 
 ### Linux
 - GUI apps would use apt/snap/flatpak
-- Adjust home directory path in home.nix
+- Home directory is automatically detected
 - Some macOS-specific tools won't be available
+
+### Multi-User/Multi-System Support
+- Configuration automatically detects:
+  - Current username via `$USER` environment variable
+  - Home directory via `$HOME` environment variable
+  - System architecture (aarch64-darwin, x86_64-linux)
+- No need to edit configuration files when switching between machines
+- Works seamlessly across different usernames and home directory locations
+- Just run `./switch.sh` on any machine

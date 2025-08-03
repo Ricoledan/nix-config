@@ -5,10 +5,25 @@
   packages = with pkgs; [
     # Nix Tools
     home-manager
+    nixpkgs-fmt
+    nix-direnv
     
-    # Version Control
+    # Shell
+    zsh
+    
+    # Version Control & Development
     git
     gh
+    vscode
+    neovim
+    
+    # Container & DevOps
+    docker
+    docker-compose
+    
+    # Programming Languages & Runtimes
+    nodejs_22
+    python3
     
     # Text Processing & Search
     jq
@@ -20,5 +35,7 @@
     curl
     tree
     yt-dlp
+    claude-code
+    openssh
   ];
 }

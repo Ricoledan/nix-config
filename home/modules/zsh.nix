@@ -32,6 +32,9 @@
       '')
       
       ''
+        # Hook direnv after instant prompt to avoid console output issues
+        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+        
         # Source powerlevel10k theme
         source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
         
