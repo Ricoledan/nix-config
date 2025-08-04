@@ -4,7 +4,6 @@
   # CLI tools that should be available in home environment
   packages = with pkgs; [
     # Nix Tools
-    home-manager
     nixpkgs-fmt
     nix-direnv
 
@@ -15,7 +14,6 @@
     git
     gh
     vscode
-    neovim
 
     # Container & DevOps
     docker
