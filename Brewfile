@@ -5,7 +5,7 @@ cask "ghostty"
 cask "adobe-creative-cloud"
 cask "alfred"
 cask "discord"
-cask "zen-browser"
+cask "zen"
 cask "plex"
 cask "obsidian"
 cask "vlc"
@@ -16,6 +16,7 @@ cask "todoist"
 cask "notion"
 cask "zotero"
 cask "caffeine"
+cask "nikitabobko/tap/aerospace"
 
 mas "Magnet", id: 441258766
 mas "Bear", id: 1091189122
