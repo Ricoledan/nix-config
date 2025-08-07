@@ -35,7 +35,10 @@ in
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
-  };
+  } // (if pkgs.stdenv.isDarwin then {
+    # AeroSpace window manager config (macOS only)
+    ".aerospace.toml".source = ../config/aerospace.toml;
+  } else {});
 
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
