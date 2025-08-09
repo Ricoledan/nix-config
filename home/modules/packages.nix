@@ -22,6 +22,8 @@
     # Programming Languages & Runtimes
     nodejs_22
     python3
+    python3Packages.pip
+    pre-commit
 
     # Text Processing & Search
     jq
