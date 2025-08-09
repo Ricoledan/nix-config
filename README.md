@@ -68,7 +68,8 @@ direnv allow
 - **Editors**: VSCode, Neovim
 - **Version Control**: Git, GitHub CLI (gh)
 - **Containers**: Docker, Docker Compose
-- **Languages**: Node.js 22, Python 3
+- **Languages**: Node.js 22, Python 3 (with pip)
+- **Code Quality**: pre-commit, nixpkgs-fmt
 - **CLI Tools**:
   - Text processing: jq, ripgrep, bat, fd
   - System utilities: curl, tree, openssh
@@ -92,11 +93,17 @@ direnv allow
   - Auto-installed plugins via Nix
   - Custom plugin support in `~/.config/nvim/lua/plugins/`
 
+### Window Management
+- **Aerospace**: Tiling window manager for macOS
+  - Configuration in `config/aerospace.toml`
+  - Managed by Home Manager
+  - i3-like keybindings
+
 ### macOS Applications (via Homebrew)
-- **Development**: Ghostty (terminal), JetBrains Toolbox
+- **Development**: Ghostty (terminal), JetBrains Toolbox, Docker Desktop
 - **Productivity**: Alfred, Todoist, Fantastical, Notion, Bear, Obsidian
-- **Utilities**: 1Password, Magnet, CleanMyMac, Caffeine
-- **Media**: Plex, VLC
+- **Utilities**: 1Password, CleanMyMac, Caffeine, Aerospace (window manager)
+- **Media**: Plex, mpv
 - **Communication**: Discord
 - **Creative**: Adobe Creative Cloud
 - **Research**: Zotero
@@ -115,6 +122,36 @@ This script will:
 - Show you what changed
 - Optionally commit the updates with detailed messages
 - Run flake checks to ensure everything works
+
+### Code Quality & Pre-commit Hooks
+
+This repository uses [pre-commit](https://pre-commit.com/) to ensure code quality and consistency.
+
+#### Installed Hooks
+- **nixpkgs-fmt**: Automatically formats `.nix` files to the standard style
+- **shellcheck**: Lints shell scripts for common errors and best practices
+- **trailing-whitespace**: Removes unnecessary whitespace at line endings
+- **end-of-file-fixer**: Ensures all files end with a newline
+- **check-merge-conflict**: Prevents committing merge conflict markers
+- **gitleaks**: Scans for hardcoded secrets and credentials
+
+#### Usage
+```bash
+# Hooks run automatically on git commit
+git commit -m "Your message"
+
+# Run hooks manually on all files
+pre-commit run --all-files
+
+# Run a specific hook
+pre-commit run nixpkgs-fmt
+
+# Update hook versions
+pre-commit autoupdate
+
+# Skip hooks temporarily (not recommended)
+git commit --no-verify -m "Emergency fix"
+```
 
 ### Code Formatting
 ```bash
@@ -202,10 +239,13 @@ brew bundle  # Ensure Brewfile apps are installed
 │       └── default.nix    # System-specific configurations
 ├── dotfiles/
 │   └── .p10k.zsh          # Powerlevel10k config
+├── config/
+│   └── aerospace.toml    # Aerospace window manager config
 ├── .github/
 │   └── workflows/
 │       └── check.yml      # CI/CD checks
 ├── Brewfile               # macOS applications
+├── .pre-commit-config.yaml # Pre-commit hooks configuration
 ├── setup.sh              # Initial setup script
 ├── switch.sh             # Apply configuration script
 ├── update.sh             # Update automation script
