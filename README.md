@@ -47,7 +47,7 @@ direnv allow
 
 ### What This Does
 1. **setup.sh**: Installs Homebrew (macOS only) and ensures Nix flakes are enabled
-2. **Home Manager activation**: 
+2. **Home Manager activation**:
    - Installs all packages defined in `home/modules/packages.nix`
    - Configures Zsh with Oh My Zsh and Powerlevel10k (with instant prompt)
    - Sets up Neovim with LazyVim
@@ -69,7 +69,7 @@ direnv allow
 - **Version Control**: Git, GitHub CLI (gh)
 - **Containers**: Docker, Docker Compose
 - **Languages**: Node.js 22, Python 3
-- **CLI Tools**: 
+- **CLI Tools**:
   - Text processing: jq, ripgrep, bat, fd
   - System utilities: curl, tree, openssh
   - Media: yt-dlp

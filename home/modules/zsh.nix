@@ -22,7 +22,7 @@
       (lib.mkBefore ''
         # Suppress Powerlevel10k instant prompt warnings
         typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
-        
+
         # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
         # Initialization code that may require console input (password prompts, [y/n]
         # confirmations, etc.) must go above this block; everything else may go below.
@@ -34,21 +34,21 @@
       ''
         # Hook direnv after instant prompt to avoid console output issues
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-        
+
         # Source powerlevel10k theme
         source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-        
+
         # Load p10k config if it exists
         [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-        
+
         # Docker completions
         if [[ -d ~/.docker/completions ]]; then
           fpath=(~/.docker/completions $fpath)
         fi
-        
+
         # 1Password CLI plugins
         [[ -f ~/.config/op/plugins.sh ]] && source ~/.config/op/plugins.sh
-        
+
         # Terraform completions
         if command -v terraform &> /dev/null; then
           autoload -U +X bashcompinit && bashcompinit
