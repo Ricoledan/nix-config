@@ -38,7 +38,7 @@ in
   } // (if pkgs.stdenv.isDarwin then {
     # AeroSpace window manager config (macOS only)
     ".aerospace.toml".source = ../config/aerospace.toml;
-  } else {});
+  } else { });
 
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
