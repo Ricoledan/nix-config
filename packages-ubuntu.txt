@@ -1,5 +1,5 @@
 # APT packages
-vlc
+mpv
 curl
 git
 openssh-client
@@ -12,5 +12,4 @@ code --classic
 
 # Flatpak packages (run with: flatpak install <package>)
 org.mozilla.firefox
-org.videolan.VLC
 com.discordapp.Discord
