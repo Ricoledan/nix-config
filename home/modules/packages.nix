@@ -1,5 +1,7 @@
 { pkgs }:
 
+with pkgs.lib;
+
 {
   # CLI tools that should be available in home environment
   packages = with pkgs; [

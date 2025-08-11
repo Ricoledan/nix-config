@@ -74,14 +74,8 @@ in
   imports = [
     ./modules/zsh.nix
     ./modules/neovim.nix
-    ./modules/sketchybar.nix
   ];
 
   # Enable bash for compatibility
   programs.bash.enable = true;
-
-  # Enable SketchyBar on macOS
-  programs.sketchybar = {
-    enable = pkgs.stdenv.isDarwin;
-  };
 }
