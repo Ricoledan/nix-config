@@ -309,6 +309,19 @@ direnv allow
 nix develop
 ```
 
+### Podman Desktop Not Detecting Podman CLI
+```bash
+# Use the wrapped version that ensures Podman is in PATH
+podman-desktop-wrapped
+
+# Or create system symlinks (requires sudo, choose one):
+sudo mkdir -p /opt/podman/bin && sudo ln -sf ~/.nix-profile/bin/podman /opt/podman/bin/podman
+# OR
+sudo ln -sf ~/.nix-profile/bin/podman /usr/local/bin/podman
+```
+
+See [docs/podman.md](docs/podman.md) for detailed explanation.
+
 ## Security Best Practices
 
 ### Secret Management

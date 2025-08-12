@@ -1,74 +1,69 @@
 { config, pkgs, lib, ... }:
 
 {
-  # Podman configuration for macOS
-  home.file = lib.mkIf pkgs.stdenv.isDarwin {
-    # Create launchd agent for podman socket
-    "Library/LaunchAgents/io.podman.socket.plist" = {
-      text = ''
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-          <key>Label</key>
-          <string>io.podman.socket</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>${pkgs.podman}/bin/podman</string>
-            <string>system</string>
-            <string>service</string>
-            <string>--time=0</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>EnvironmentVariables</key>
-          <dict>
-            <key>PATH</key>
-            <string>${pkgs.podman}/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-          </dict>
-          <key>Sockets</key>
-          <dict>
-            <key>Listeners</key>
-            <dict>
-              <key>SockPathName</key>
-              <string>${config.home.homeDirectory}/.local/share/containers/podman/machine/podman.sock</string>
-            </dict>
-          </dict>
-        </dict>
-        </plist>
-      '';
-      onChange = ''
-        /bin/launchctl unload ~/Library/LaunchAgents/io.podman.socket.plist 2>/dev/null || true
-        /bin/launchctl load ~/Library/LaunchAgents/io.podman.socket.plist
-      '';
-    };
-  };
-
   # Environment variables for Podman
-  home.sessionVariables = {
+  home.sessionVariables = lib.mkIf pkgs.stdenv.isDarwin {
     DOCKER_HOST = "unix://${config.home.homeDirectory}/.local/share/containers/podman/machine/podman.sock";
-    CONTAINERS_CONF = "${config.home.homeDirectory}/.config/containers/containers.conf";
-    CONTAINERS_STORAGE_CONF = "${config.home.homeDirectory}/.config/containers/storage.conf";
   };
 
-  # Create containers configuration
-  xdg.configFile."containers/containers.conf".text = ''
-    [engine]
-    cgroup_manager = "cgroupfs"
-    events_logger = "file"
-    runtime = "${pkgs.podman}/bin/crun"
-  '';
-
-  # Create a wrapper script that ensures Podman Desktop finds podman
-  home.packages = lib.mkIf pkgs.stdenv.isDarwin [
+  # Install podman and create the necessary symlinks
+  home.packages = lib.mkIf pkgs.stdenv.isDarwin (with pkgs; [
+    podman
+    qemu
+    gvproxy
+    podman-desktop
+    
+    # Create a wrapper script that ensures Podman is in PATH
     (pkgs.writeShellScriptBin "podman-desktop-wrapped" ''
       export PATH="${pkgs.podman}/bin:$PATH"
       exec ${pkgs.podman-desktop}/bin/podman-desktop "$@"
     '')
-  ];
+  ]);
 
-  # Create an alias for convenience
-  programs.zsh.shellAliases = lib.mkIf pkgs.stdenv.isDarwin {
-    podman-desktop = "podman-desktop-wrapped";
-  };
+  # Create symlinks in paths where Podman Desktop looks
+  home.activation.setupPodman = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    # Podman Desktop checks these specific paths
+    PODMAN_PATHS=(
+      "/usr/local/bin"
+      "/opt/homebrew/bin"
+      "/opt/podman/bin"
+    )
+    
+    echo "Setting up Podman CLI for Podman Desktop detection..."
+    
+    # Check if we can create symlinks without sudo first
+    for dir in "''${PODMAN_PATHS[@]}"; do
+      if [[ -d "$dir" ]] && [[ -w "$dir" ]]; then
+        echo "Creating podman symlinks in $dir (no sudo needed)..."
+        ln -sf ${pkgs.podman}/bin/podman "$dir/podman" 2>/dev/null || true
+        ln -sf ${pkgs.podman}/bin/podman-remote "$dir/podman-remote" 2>/dev/null || true
+        ln -sf ${pkgs.gvproxy}/bin/gvproxy "$dir/gvproxy" 2>/dev/null || true
+        break
+      fi
+    done
+    
+    # If no writable directory found, provide instructions
+    if ! command -v podman &> /dev/null || ! /opt/podman/bin/podman --version &> /dev/null 2>&1; then
+      echo ""
+      echo "⚠️  Podman Desktop may not detect Podman CLI!"
+      echo ""
+      echo "Please run ONE of these commands with sudo:"
+      echo ""
+      echo "  Option 1 (recommended for Nix users):"
+      echo "  sudo mkdir -p /opt/podman/bin && sudo ln -sf ${pkgs.podman}/bin/podman /opt/podman/bin/podman"
+      echo ""
+      echo "  Option 2 (if you have Homebrew):"
+      echo "  sudo ln -sf ${pkgs.podman}/bin/podman /opt/homebrew/bin/podman"
+      echo ""
+      echo "  Option 3 (traditional location):"
+      echo "  sudo ln -sf ${pkgs.podman}/bin/podman /usr/local/bin/podman"
+      echo ""
+    fi
+    
+    # Also ensure it's in user's local bin
+    mkdir -p $HOME/.local/bin
+    ln -sf ${pkgs.podman}/bin/podman $HOME/.local/bin/podman
+    ln -sf ${pkgs.podman}/bin/podman-remote $HOME/.local/bin/podman-remote
+    ln -sf ${pkgs.gvproxy}/bin/gvproxy $HOME/.local/bin/gvproxy
+  '';
 }
