@@ -137,6 +137,164 @@ direnv allow
 - **Research**: Zotero
 - **Browser**: Zen Browser
 
+## Architecture Diagrams
+
+### System Architecture
+```mermaid
+graph TB
+    subgraph "Entry Points"
+        Setup[setup.sh]
+        Sync[sync-hm.sh]
+        Update[update.sh]
+    end
+
+    subgraph "Nix Flake System"
+        Flake[flake.nix]
+        HM[Home Manager]
+        Nixpkgs[nixpkgs]
+    end
+
+    subgraph "Platform Layer"
+        Darwin[macOS/Darwin]
+        Linux[Linux]
+        Homebrew[Homebrew<br/>macOS only]
+    end
+
+    subgraph "Configuration Modules"
+        Home[home/home.nix]
+        Packages[modules/packages.nix]
+        Zsh[modules/zsh.nix]
+        Neovim[modules/neovim.nix]
+    end
+
+    subgraph "User Environment"
+        Shell[Zsh + Oh My Zsh]
+        Editor[Neovim + LazyVim]
+        Tools[CLI Tools]
+        Apps[GUI Apps]
+    end
+
+    Setup --> Homebrew
+    Setup --> Flake
+    Sync --> Flake
+    Update --> Flake
+
+    Flake --> HM
+    Flake --> Nixpkgs
+    HM --> Home
+
+    Home --> Packages
+    Home --> Zsh
+    Home --> Neovim
+
+    Packages --> Tools
+    Zsh --> Shell
+    Neovim --> Editor
+
+    Darwin --> Homebrew
+    Homebrew --> Apps
+
+    Linux --> Tools
+    Darwin --> Tools
+```
+
+### Module Dependencies
+```mermaid
+graph LR
+    subgraph "Core"
+        F[flake.nix]
+        H[home.nix]
+    end
+
+    subgraph "Modules"
+        P[packages.nix]
+        Z[zsh.nix]
+        N[neovim.nix]
+    end
+
+    subgraph "External Configs"
+        A[aerospace.toml]
+        B[Brewfile]
+    end
+
+    subgraph "Scripts"
+        S1[setup.sh]
+        S2[sync-hm.sh]
+        S3[update.sh]
+    end
+
+    F -->|defines| H
+    H -->|imports| P
+    H -->|imports| Z
+    H -->|imports| N
+    H -->|references| A
+
+    S1 -->|installs| B
+    S2 -->|activates| F
+    S3 -->|updates| F
+
+    P -->|provides packages to| H
+    Z -->|configures shell for| H
+    N -->|configures editor for| H
+```
+
+### Data Flow
+```mermaid
+sequenceDiagram
+    participant User
+    participant Script as sync-hm.sh
+    participant Nix as Nix Flake
+    participant HM as Home Manager
+    participant Env as User Environment
+
+    User->>Script: Run ./sync-hm.sh
+    Script->>Script: Detect $USER, $HOME, system
+    Script->>Nix: nix run home-manager -- switch
+    Nix->>Nix: Evaluate flake.nix
+    Nix->>HM: Pass configuration
+    HM->>HM: Read home.nix
+    HM->>HM: Import modules
+    HM->>Env: Install packages
+    HM->>Env: Create symlinks
+    HM->>Env: Apply configurations
+    Env-->>User: Environment ready
+```
+
+### Platform-Specific Components
+```mermaid
+graph TD
+    subgraph "Common Components"
+        NC[Nix Core]
+        HMC[Home Manager]
+        CLI[CLI Tools<br/>ripgrep, fzf, bat, etc.]
+        Dev[Development Tools<br/>git, nodejs, python]
+    end
+
+    subgraph "macOS Specific"
+        HB[Homebrew]
+        Aero[AeroSpace WM]
+        GUI[GUI Apps<br/>Alfred, Ghostty, etc.]
+        Pod[Podman via Homebrew]
+    end
+
+    subgraph "Linux Specific"
+        Pure[Pure Nix Packages]
+        PodNix[Podman via Nix]
+    end
+
+    NC --> HMC
+    HMC --> CLI
+    HMC --> Dev
+
+    HMC -->|isDarwin| HB
+    HMC -->|isDarwin| Aero
+    HB --> GUI
+    HB --> Pod
+
+    HMC -->|isLinux| Pure
+    Pure --> PodNix
+```
+
 ## Automation & Maintenance
 
 ### Update Dependencies
