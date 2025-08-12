@@ -31,6 +31,16 @@ elif [[ "$OS" == "Linux" ]]; then
     fi
 fi
 
+# Setup Podman if available
+if command -v podman &> /dev/null; then
+    echo ""
+    echo "🐳 Found Podman installation, running setup..."
+    if [[ -f "scripts/setup-podman.sh" ]]; then
+        chmod +x scripts/setup-podman.sh
+        echo "Run './scripts/setup-podman.sh' to complete Podman setup (requires sudo)"
+    fi
+fi
+
 echo "✅ Setup complete!"
 echo ""
 echo "Usage:"
@@ -39,4 +49,7 @@ if [[ "$OS" == "macOS" ]]; then
     echo "  brew bundle --no-upgrade    # Install Homebrew apps without upgrading"
 else
     echo "  ./install-ubuntu.sh    # Install/update Ubuntu packages"
+fi
+if command -v podman &> /dev/null; then
+    echo "  ./scripts/setup-podman.sh    # Complete Podman setup (requires sudo)"
 fi
