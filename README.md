@@ -299,7 +299,7 @@ brew bundle  # Ensure Brewfile apps are installed
 
 ### Home Manager Not Found
 ```bash
-# Run the switch script:
+# Run the sync script:
 ./sync-hm.sh
 ```
 
