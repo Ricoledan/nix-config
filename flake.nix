@@ -43,7 +43,7 @@
 
           shellHook = ''
             echo "Nix development environment loaded"
-            echo "Run './switch.sh' to activate home-manager configuration"
+            echo "Run './sync-hm.sh' to activate home-manager configuration"
           '';
         };
       });

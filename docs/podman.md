@@ -43,7 +43,7 @@ Ensure Homebrew is installed:
 
 1. Apply the home-manager configuration:
    ```bash
-   ./switch.sh
+   ./sync-hm.sh
    ```
 
 2. Install Homebrew packages:

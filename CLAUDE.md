@@ -56,7 +56,7 @@ The core principles are defined in the main README.md. See [Core Principles sect
 
 Always test with:
 ```bash
-./switch.sh  # or ./sync-hm.sh
+./sync-hm.sh
 ```
 
 Remember to check both platforms when possible.
