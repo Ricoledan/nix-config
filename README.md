@@ -197,6 +197,15 @@ vim Brewfile                   # macOS apps
 brew bundle
 ```
 
+### Checking Home Manager News
+```bash
+# View Home Manager news (updates, breaking changes, new features)
+home-manager news --flake ".#user@aarch64-darwin" --impure
+
+# For Linux:
+home-manager news --flake ".#user@x86_64-linux" --impure
+```
+
 ### Updating Packages
 ```bash
 # Update all Nix packages (recommended method)
