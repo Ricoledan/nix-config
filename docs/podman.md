@@ -1,128 +1,103 @@
 # Podman Configuration Guide
 
-## The Problem
+## Why Homebrew for Podman on macOS?
 
-Podman Desktop searches for the Podman CLI in specific hardcoded paths:
-- `/usr/local/bin/podman`
-- `/opt/homebrew/bin/podman` 
-- `/opt/podman/bin/podman`
+After extensive testing, we've decided to manage Podman and Podman Desktop through Homebrew on macOS rather than Nix. Here's why:
 
-However, when installed via Nix, Podman is located at:
-- `~/.nix-profile/bin/podman` (or similar Nix store path)
+### The Challenges with Nix
 
-This mismatch causes Podman Desktop to report "Podman CLI not found" even though Podman is installed and working perfectly from the terminal.
+1. **Missing podman-mac-helper**: The Nix podman package doesn't include `podman-mac-helper`, which is essential for:
+   - Binding to privileged ports (< 1024)
+   - Proper macOS system integration
+   - Running containers with elevated privileges when needed
 
-## Why This Happens
+2. **Podman Desktop Integration Issues**:
+   - Podman Desktop looks for Podman CLI in hardcoded paths:
+     - `/usr/local/bin/podman`
+     - `/opt/homebrew/bin/podman`
+     - `/opt/podman/bin/podman`
+   - Nix installs to `~/.nix-profile/bin/podman`, which isn't detected
+   - Workarounds require manual symlinks with sudo or wrapper scripts
 
-1. **Podman Desktop's detection logic**: The application has hardcoded paths where it looks for the Podman binary, based on common installation methods (Homebrew, system packages, official installer).
+3. **Complex Workarounds**:
+   - Attempted to extract podman-mac-helper from official installer
+   - Required building custom Nix derivations
+   - Still faced integration issues with macOS security features
 
-2. **Nix's unique approach**: Nix installs software in its store (`/nix/store/...`) and creates symlinks in user profiles, which aren't in Podman Desktop's search paths.
+### Why Homebrew Works Better
 
-3. **macOS security**: System directories like `/usr/local/bin` require elevated permissions to modify, making automated symlinking challenging.
+1. **Complete Package**: Homebrew's podman formula includes all necessary components
+2. **Native Integration**: Installs to expected system paths
+3. **Podman Desktop Compatibility**: Works out of the box
+4. **Simpler Setup**: One-time installation with full functionality
 
-## Solutions (Most to Least Reproducible)
+## Installation
 
-### 1. Wrapper Script (Recommended) ✅
-
-**What it does**: Creates a launcher that adds Podman to PATH before starting Podman Desktop.
-
+### Prerequisites
+Ensure Homebrew is installed:
 ```bash
-# After running home-manager switch, use:
-podman-desktop-wrapped
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-**Pros**:
-- Fully reproducible across machines
-- No sudo required
-- Declarative in Nix configuration
-- Works immediately after `home-manager switch`
+### Install Podman via Homebrew
 
-**Cons**:
-- Must remember to use `podman-desktop-wrapped` instead of regular app
+1. Apply the home-manager configuration:
+   ```bash
+   ./switch.sh
+   ```
 
-### 2. System Symlinks (Semi-Reproducible) ⚠️
+2. Install Homebrew packages:
+   ```bash
+   brew bundle --file=$HOME/.config/homebrew/Brewfile
+   ```
 
-**What it does**: Creates symlinks in paths where Podman Desktop looks.
+3. Set up Podman Mac Helper:
+   ```bash
+   sudo podman-mac-helper install
+   ```
 
-```bash
-# Option A: Create dedicated directory (recommended)
-sudo mkdir -p /opt/podman/bin
-sudo ln -sf ~/.nix-profile/bin/podman /opt/podman/bin/podman
+4. Initialize Podman machine:
+   ```bash
+   podman machine init
+   podman machine start
+   ```
 
-# Option B: Use existing directory
-sudo ln -sf ~/.nix-profile/bin/podman /usr/local/bin/podman
-```
+## What This Setup Provides
 
-**Pros**:
-- Works with regular Podman Desktop app
-- One-time setup per machine
-
-**Cons**:
-- Requires sudo (manual intervention)
-- Must be redone on each new machine
-- Symlinks may break if Nix profile path changes
-
-### 3. PATH Modification (Not Recommended) ❌
-
-**What it does**: Modifies system PATH to include Nix profile.
-
-**Why not recommended**:
-- macOS apps don't inherit shell PATH
-- Would require modifying system-wide configurations
-- May conflict with other tools
-
-## How Our Configuration Handles This
-
-The `home/modules/podman.nix` file includes:
-
-1. **Automatic symlink attempt**: Tries to create symlinks in writable directories during activation
-2. **Wrapper script**: Provides `podman-desktop-wrapped` as a reliable fallback
-3. **Clear instructions**: Shows exactly what commands to run if manual setup is needed
+- **Podman CLI**: Full container management capabilities
+- **Podman Compose**: Docker Compose compatibility
+- **Podman Desktop**: GUI for container management
+- **Docker Compatibility**: DOCKER_HOST is configured for compatibility
 
 ## Verification
 
-To check if Podman Desktop can detect Podman:
-
+Check that everything is working:
 ```bash
-# Check if Podman is installed
-which podman
+# Verify Podman installation
 podman --version
 
-# Check if symlinks exist in expected locations
-ls -la /opt/podman/bin/podman 2>/dev/null || echo "Not in /opt/podman/bin"
-ls -la /usr/local/bin/podman 2>/dev/null || echo "Not in /usr/local/bin"
-ls -la /opt/homebrew/bin/podman 2>/dev/null || echo "Not in /opt/homebrew/bin"
+# Check machine status
+podman machine list
+
+# Verify Mac Helper
+sudo podman-mac-helper status
+
+# Test privileged port binding
+podman run -d -p 80:80 nginx:alpine
 ```
 
-## Docker Compatibility
+## Trade-offs
 
-The configuration also sets up Docker compatibility:
-- Sets `DOCKER_HOST` to point to Podman's socket
-- Allows Docker commands to work with Podman
-- Enables tools expecting Docker to work seamlessly
+### What We Lose
+- Pure Nix reproducibility for Podman
+- Declarative version management for Podman
 
-## Troubleshooting
+### What We Gain
+- Full macOS integration
+- All Podman features working correctly
+- No manual intervention after initial setup
+- Better Podman Desktop experience
 
-### Podman Desktop still doesn't detect Podman
-1. Ensure you've run `home-manager switch`
-2. Try the wrapper: `podman-desktop-wrapped`
-3. If needed, create symlinks with sudo (see above)
-4. Restart Podman Desktop after creating symlinks
+## Future Considerations
 
-### Permission denied when creating symlinks
-- You need sudo access
-- Some directories may be protected by System Integrity Protection (SIP)
-- Try `/opt/podman/bin` first as it's usually less restricted
-
-### Podman works in terminal but not in Podman Desktop
-- This confirms the PATH issue
-- Use the wrapper script or create symlinks
-
-## Future Improvements
-
-Ideally, Podman Desktop would:
-- Check standard PATH locations
-- Allow custom Podman binary path in settings
-- Detect Nix installations automatically
-
-Until then, the wrapper script provides the most reliable, reproducible solution.
+If the Nix podman package eventually includes podman-mac-helper and better macOS integration, we could revisit this decision. For now, Homebrew provides the most reliable Podman experience on macOS.

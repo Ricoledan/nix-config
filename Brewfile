@@ -1,7 +1,12 @@
 brew "mas"
 brew "direnv"
 
+# Container tools - better macOS integration via Homebrew
+brew "podman"
+brew "podman-compose"
+
 cask "ghostty"
+cask "podman-desktop"
 cask "adobe-creative-cloud"
 cask "alfred"
 cask "discord"

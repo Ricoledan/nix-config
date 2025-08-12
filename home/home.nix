@@ -74,7 +74,6 @@ in
   imports = [
     ./modules/zsh.nix
     ./modules/neovim.nix
-    ./modules/podman.nix
   ];
 
   # Enable bash for compatibility

@@ -19,8 +19,8 @@ with pkgs.lib;
     vscode
 
     # Container & DevOps
-    podman
-    podman-compose
+    # Note: Podman and podman-compose are managed by Homebrew on macOS
+    # See docs/podman.md for details
 
     # Programming Languages & Runtimes
     nodejs_22

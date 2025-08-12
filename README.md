@@ -2,6 +2,33 @@
 
 Cross-platform Nix flake configuration with Home Manager integration, following best practices for maintainability and security.
 
+## Core Principles
+
+1. **Reproducibility First**: Prefer declarative, reproducible configurations over imperative setups
+   - Use Nix for package management when possible
+   - Version-control all configuration
+   - Minimize manual setup steps
+
+2. **Cross-Platform Compatibility**: Support both macOS and Linux seamlessly
+   - Use conditional logic for platform-specific needs
+   - Document platform differences clearly
+   - Test on both platforms regularly
+
+3. **Pragmatic Over Pure**: Choose practical solutions when ideal ones are too complex
+   - It's okay to use platform-native tools (like Homebrew) when Nix falls short
+   - Prioritize working solutions over theoretical purity
+   - Document and justify exceptions clearly (see [DECISIONS.md](DECISIONS.md))
+
+4. **User Experience**: Make the setup process as smooth as possible
+   - Provide clear error messages and guidance
+   - Automate what can be automated
+   - Document manual steps thoroughly
+
+5. **Maintainability**: Keep the configuration simple and well-documented
+   - Prefer clarity over cleverness
+   - Document the "why" not just the "what"
+   - Regular cleanup of unused components
+
 ## Features
 
 - **Cross-platform**: Works seamlessly on macOS (aarch64) and Linux (x86_64)
@@ -9,6 +36,7 @@ Cross-platform Nix flake configuration with Home Manager integration, following 
 - **Automated**: Update scripts, CI/CD integration, format checking
 - **Secure**: Built-in secret management guidelines
 - **Fast**: Optimized with Nix caches and direnv integration
+- **Pragmatic**: Uses platform-native tools when optimal (see [DECISIONS.md](DECISIONS.md))
 
 ## Quick Start
 
@@ -67,7 +95,7 @@ direnv allow
 ### Development Tools (via Nix)
 - **Editors**: VSCode, Neovim
 - **Version Control**: Git, GitHub CLI (gh)
-- **Containers**: Podman, Podman Compose
+- **Containers**: Managed via Homebrew on macOS (see [docs/podman.md](docs/podman.md))
 - **Languages**: Node.js 22, Python 3 (with pip)
 - **Code Quality**: pre-commit, nixpkgs-fmt
 - **CLI Tools**:
@@ -250,6 +278,8 @@ brew bundle  # Ensure Brewfile apps are installed
 │   └── .p10k.zsh          # Powerlevel10k config
 ├── config/
 │   └── aerospace.toml    # Aerospace window manager config
+├── docs/
+│   └── podman.md         # Podman setup documentation
 ├── .github/
 │   └── workflows/
 │       └── check.yml      # CI/CD checks
@@ -260,6 +290,8 @@ brew bundle  # Ensure Brewfile apps are installed
 ├── update.sh             # Update automation script
 ├── .envrc                # Direnv configuration
 ├── .gitignore            # Includes .env for secrets
+├── DECISIONS.md          # Architectural decisions log
+├── CLAUDE.md            # Claude AI context file
 └── README.md            # This file
 ```
 
@@ -309,18 +341,8 @@ direnv allow
 nix develop
 ```
 
-### Podman Desktop Not Detecting Podman CLI
-```bash
-# Use the wrapped version that ensures Podman is in PATH
-podman-desktop-wrapped
-
-# Or create system symlinks (requires sudo, choose one):
-sudo mkdir -p /opt/podman/bin && sudo ln -sf ~/.nix-profile/bin/podman /opt/podman/bin/podman
-# OR
-sudo ln -sf ~/.nix-profile/bin/podman /usr/local/bin/podman
-```
-
-See [docs/podman.md](docs/podman.md) for detailed explanation.
+### Podman Issues on macOS
+Podman is managed via Homebrew on macOS. See [docs/podman.md](docs/podman.md) for setup instructions.
 
 ## Security Best Practices
 
