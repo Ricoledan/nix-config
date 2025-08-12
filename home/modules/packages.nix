@@ -19,8 +19,8 @@ with pkgs.lib;
     vscode
 
     # Container & DevOps
-    docker
-    docker-compose
+    podman
+    podman-compose
 
     # Programming Languages & Runtimes
     nodejs_22

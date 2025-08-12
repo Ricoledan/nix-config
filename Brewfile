@@ -17,7 +17,7 @@ cask "notion"
 cask "zotero"
 cask "caffeine"
 cask "nikitabobko/tap/aerospace"
-cask "docker-desktop"
+cask "podman-desktop"
 
 mas "Bear", id: 1091189122
 mas "CleanMyMac", id: 1339170533

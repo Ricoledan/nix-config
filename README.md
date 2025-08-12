@@ -67,7 +67,7 @@ direnv allow
 ### Development Tools (via Nix)
 - **Editors**: VSCode, Neovim
 - **Version Control**: Git, GitHub CLI (gh)
-- **Containers**: Docker, Docker Compose
+- **Containers**: Podman, Podman Compose
 - **Languages**: Node.js 22, Python 3 (with pip)
 - **Code Quality**: pre-commit, nixpkgs-fmt
 - **CLI Tools**:
@@ -78,7 +78,7 @@ direnv allow
 
 ### Shell Configuration
 - **Zsh** with:
-  - Oh My Zsh (git, docker plugins)
+  - Oh My Zsh (git, podman plugins)
   - Powerlevel10k theme
   - Syntax highlighting
   - Auto-suggestions
@@ -100,7 +100,7 @@ direnv allow
   - i3-like keybindings
 
 ### macOS Applications (via Homebrew)
-- **Development**: Ghostty (terminal), JetBrains Toolbox, Docker Desktop
+- **Development**: Ghostty (terminal), JetBrains Toolbox, Podman Desktop
 - **Productivity**: Alfred, Todoist, Fantastical, Notion, Bear, Obsidian
 - **Utilities**: 1Password, CleanMyMac, Caffeine, Aerospace (window manager)
 - **Media**: Plex, mpv

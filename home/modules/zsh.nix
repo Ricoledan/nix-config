@@ -24,7 +24,7 @@
       theme = "robbyrussell"; # Will be overridden by p10k
       plugins = [
         "git"
-        "docker"
+        "podman"
       ];
     };
 
@@ -52,9 +52,10 @@
         # Load p10k config if it exists
         [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-        # Docker completions
-        if [[ -d ~/.docker/completions ]]; then
-          fpath=(~/.docker/completions $fpath)
+        # Podman completions
+        if command -v podman &> /dev/null; then
+          # Podman completion is handled automatically by the shell
+          :
         fi
 
         # 1Password CLI plugins
@@ -93,7 +94,8 @@
     # Environment variables
     sessionVariables = {
       # Add any persistent environment variables here
-      COMPOSE_BAKE = "true";
+      # Podman-specific settings
+      DOCKER_HOST = "unix://\${XDG_RUNTIME_DIR}/podman/podman.sock";
     };
 
     # Aliases
@@ -103,6 +105,10 @@
       gs = "git status";
       gc = "git commit";
       gp = "git push";
+      
+      # Podman aliases for Docker compatibility
+      docker = "podman";
+      docker-compose = "podman-compose";
     };
   };
 
