@@ -27,9 +27,9 @@ cd nix-config
 ./setup.sh
 
 # 3. Apply the configuration (works for any user)
-./switch.sh
+./sync-hm.sh
 
-# The switch.sh script automatically:
+# The sync-hm.sh script automatically:
 # - Detects your username ($USER)
 # - Detects your home directory ($HOME)
 # - Detects your system architecture
@@ -191,7 +191,7 @@ vim home/modules/zsh.nix       # Shell config
 vim Brewfile                   # macOS apps
 
 # Apply changes
-./switch.sh
+./sync-hm.sh
 
 # For Brewfile changes
 brew bundle
@@ -204,7 +204,7 @@ brew bundle
 
 # Or manually:
 nix flake update
-./switch.sh
+./sync-hm.sh
 
 # Update Homebrew packages
 brew update && brew upgrade
@@ -247,7 +247,7 @@ brew bundle  # Ensure Brewfile apps are installed
 ├── Brewfile               # macOS applications
 ├── .pre-commit-config.yaml # Pre-commit hooks configuration
 ├── setup.sh              # Initial setup script
-├── switch.sh             # Apply configuration script
+├── sync-hm.sh            # Sync Home Manager configuration
 ├── update.sh             # Update automation script
 ├── .envrc                # Direnv configuration
 ├── .gitignore            # Includes .env for secrets
@@ -259,7 +259,7 @@ brew bundle  # Ensure Brewfile apps are installed
 ### Home Manager Not Found
 ```bash
 # Run the switch script:
-./switch.sh
+./sync-hm.sh
 ```
 
 ### LazyVim Not Working
@@ -270,7 +270,7 @@ rm -rf ~/.cache/nvim
 rm -rf ~/.config/nvim/lazy-lock.json
 
 # Rebuild Home Manager configuration
-./switch.sh
+./sync-hm.sh
 
 # Launch Neovim - LazyVim will auto-install
 nvim
@@ -280,7 +280,7 @@ nvim
 ```bash
 # To modify p10k configuration:
 # Edit dotfiles/.p10k.zsh directly
-# Then rebuild: ./switch.sh
+# Then rebuild: ./sync-hm.sh
 ```
 
 ### Nix Build Failures
@@ -288,7 +288,7 @@ nvim
 # Clear Nix store and rebuild
 nix-collect-garbage -d
 nix flake update
-./switch.sh
+./sync-hm.sh
 ```
 
 ### Environment Not Loading
@@ -346,7 +346,7 @@ nix develop
   - System architecture (aarch64-darwin, x86_64-linux)
 - No need to edit configuration files when switching between machines
 - Works seamlessly across different usernames and home directory locations
-- Just run `./switch.sh` on any machine
+- Just run `./sync-hm.sh` on any machine
 
 ## CI/CD Integration
 
