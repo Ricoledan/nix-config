@@ -6,7 +6,7 @@
     enable = true;
     enableZshIntegration = true;
     settings = {
-      auto_sync = false;
+      auto_sync = true;
       update_check = false;
       style = "compact";
     };
