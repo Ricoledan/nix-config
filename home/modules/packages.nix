@@ -11,6 +11,7 @@ with pkgs.lib;
 
     # Shell
     zsh
+    zoxide
 
     # Version Control & Development
     git
@@ -32,9 +33,11 @@ with pkgs.lib;
     ripgrep
     bat
     fd
+    fzf
 
     # System Utilities
     curl
+    xh
     tree
     yt-dlp
     claude-code

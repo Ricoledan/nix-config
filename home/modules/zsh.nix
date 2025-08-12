@@ -1,6 +1,17 @@
 { config, pkgs, lib, ... }:
 
 {
+  # Enable Atuin
+  programs.atuin = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      auto_sync = false;
+      update_check = false;
+      style = "compact";
+    };
+  };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -54,7 +65,11 @@
           autoload -U +X bashcompinit && bashcompinit
           complete -o nospace -C $(which terraform) terraform
         fi
+
+        # Initialize Zoxide
+        eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
       ''
+
     ];
 
     # Run commands on login shell (after P10k instant prompt)
