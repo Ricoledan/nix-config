@@ -140,6 +140,9 @@ direnv allow
 ## Architecture Diagrams
 
 ### System Architecture
+
+This diagram shows the high-level architecture of the Nix configuration system. It illustrates how the three main entry scripts (`setup.sh`, `sync-hm.sh`, and `update.sh`) interact with the Nix flake system, which then configures the user environment through Home Manager. The platform layer shows how macOS uses Homebrew for certain packages while Linux uses pure Nix packages.
+
 ```mermaid
 graph TB
     subgraph "Entry Points"
@@ -199,6 +202,9 @@ graph TB
 ```
 
 ### Module Dependencies
+
+This diagram illustrates the relationships between different configuration files and modules. The core `flake.nix` defines the overall system and references `home.nix`, which then imports various modules for packages, shell (zsh), and editor (neovim) configuration. External scripts interact with these files to set up, sync, or update the system.
+
 ```mermaid
 graph LR
     subgraph "Core"
@@ -239,6 +245,9 @@ graph LR
 ```
 
 ### Data Flow
+
+This sequence diagram shows the step-by-step process that occurs when you run `./sync-hm.sh`. It demonstrates how the script detects your user environment, invokes Nix flake evaluation, passes configuration to Home Manager, and ultimately results in a fully configured user environment with all packages installed and configurations applied.
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -261,6 +270,9 @@ sequenceDiagram
 ```
 
 ### Platform-Specific Components
+
+This diagram clearly separates common components that work across all platforms from platform-specific implementations. It shows how the configuration handles differences between macOS and Linux, particularly highlighting that macOS uses Homebrew for GUI applications and Podman, while Linux can use pure Nix packages for everything. The `isDarwin` and `isLinux` conditions in the configuration determine which components are activated.
+
 ```mermaid
 graph TD
     subgraph "Common Components"
