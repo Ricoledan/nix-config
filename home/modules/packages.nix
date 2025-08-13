@@ -34,6 +34,8 @@ with pkgs.lib;
     bat
     fd
     fzf
+    asciidoctor
+    pandoc
 
     # System Utilities
     curl
