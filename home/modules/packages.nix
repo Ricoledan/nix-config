@@ -24,8 +24,14 @@ with pkgs.lib;
 
     # Programming Languages & Runtimes
     nodejs_22
-    python3
-    python3Packages.pip
+    (python3.withPackages (ps: with ps; [
+      pip
+      jupyterlab
+      notebook
+      matplotlib
+      pandas
+      numpy
+    ]))
     pre-commit
 
     # Text Processing & Search
