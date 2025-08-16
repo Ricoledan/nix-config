@@ -106,6 +106,9 @@
       gc = "git commit";
       gp = "git push";
 
+      # Replace cd with zoxide
+      cd = "z";
+
       # Podman aliases for Docker compatibility
       docker = "podman";
       docker-compose = "podman-compose";

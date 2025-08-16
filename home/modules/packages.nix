@@ -12,6 +12,7 @@ with pkgs.lib;
     # Shell
     zsh
     zoxide
+    tmux
 
     # Version Control & Development
     git
