@@ -1,7 +1,6 @@
 brew "mas"
 brew "direnv"
 
-# Container tools - better macOS integration via Homebrew
 brew "podman"
 brew "podman-compose"
 
