@@ -24,6 +24,8 @@
     ];
 
     # macOS-specific shell configuration
+    # Note: Using initExtra (deprecated but still functional)
+    # TODO: Update to initContent when available in stable home-manager
     programs.zsh.initExtra = lib.mkAfter ''
       # macOS-specific zsh configuration
 

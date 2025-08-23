@@ -29,6 +29,8 @@
     };
 
     # Initialize zsh with powerlevel10k instant prompt first
+    # Note: Using initContent instead of initExtra (though initExtra still works)
+    # This addresses the deprecation warning in newer home-manager versions
     initContent = lib.mkMerge [
       (lib.mkBefore ''
         # Suppress Powerlevel10k instant prompt warnings
