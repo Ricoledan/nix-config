@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Flake Check
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v9
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v3
+
+      - name: Check Nix flake
+        run: |
+          nix flake check --impure --show-trace
+
+      - name: Check formatting
+        run: |
+          nix fmt -- --check .
+
+      - name: Build home-manager configuration
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            SYSTEM="aarch64-darwin"
+          else
+            SYSTEM="x86_64-linux"
+          fi
+          nix build .#homeConfigurations.user@${SYSTEM}.activationPackage --impure --show-trace
+
+  validate-home-manager:
+    name: Validate Home Manager Config
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v9
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v3
+
+      - name: Validate configuration syntax
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            SYSTEM="aarch64-darwin"
+          else
+            SYSTEM="x86_64-linux"
+          fi
+          # Eval the configuration to check for errors
+          nix eval .#homeConfigurations.user@${SYSTEM}.config.home.username --impure
+
+      - name: Check module imports
+        run: |
+          # Verify all module files exist and are valid Nix
+          for module in home/modules/**/*.nix; do
+            echo "Checking $module..."
+            nix-instantiate --parse "$module" > /dev/null
+          done
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy security scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'

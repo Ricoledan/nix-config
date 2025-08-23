@@ -1,0 +1,192 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      update-type:
+        description: 'Type of update'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - nixpkgs
+          - home-manager
+          - flake-inputs
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-flake:
+    name: Update Flake Inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v9
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v3
+
+      - name: Update flake inputs
+        id: update
+        run: |
+          # Store current versions
+          echo "## Current versions:" > update-message.txt
+          nix flake metadata --json | jq -r '.locks.nodes | to_entries[] | select(.key != "root") | "- \(.key): \(.value.locked.rev[:8])"' >> update-message.txt
+          echo "" >> update-message.txt
+
+          # Update based on input
+          case "${{ github.event.inputs.update-type || 'all' }}" in
+            nixpkgs)
+              echo "Updating nixpkgs..."
+              nix flake lock --update-input nixpkgs
+              ;;
+            home-manager)
+              echo "Updating home-manager..."
+              nix flake lock --update-input home-manager
+              ;;
+            *)
+              echo "Updating all inputs..."
+              nix flake update
+              ;;
+          esac
+
+          # Check if there are changes
+          if git diff --quiet flake.lock; then
+            echo "No updates available"
+            echo "has-updates=false" >> $GITHUB_OUTPUT
+          else
+            echo "Updates found"
+            echo "has-updates=true" >> $GITHUB_OUTPUT
+
+            # Store new versions
+            echo "## New versions:" >> update-message.txt
+            nix flake metadata --json | jq -r '.locks.nodes | to_entries[] | select(.key != "root") | "- \(.key): \(.value.locked.rev[:8])"' >> update-message.txt
+          fi
+
+      - name: Test updated configuration
+        if: steps.update.outputs.has-updates == 'true'
+        run: |
+          # Run flake check to ensure updates don't break anything
+          nix flake check --impure || echo "::warning::Flake check failed with new updates"
+
+      - name: Create pull request
+        if: steps.update.outputs.has-updates == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            chore: update flake inputs
+
+            Automated dependency update via GitHub Actions
+          title: "chore: update flake inputs"
+          body: |
+            ## Automated Dependency Update
+
+            This PR updates the flake inputs to their latest versions.
+
+            ${{ steps.update.outputs.update-message }}
+
+            ### Checklist
+            - [ ] CI checks pass
+            - [ ] Configuration builds successfully
+            - [ ] Tested locally with `./sync-hm.sh`
+
+            ---
+            *This PR was created automatically by the update-deps workflow*
+          branch: update-flake-inputs
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+
+  update-brewfile:
+    name: Update Brewfile Dependencies
+    runs-on: macos-latest
+    if: github.event.inputs.update-type == 'all' || github.event.schedule
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Homebrew
+        run: |
+          brew update
+
+      - name: Check for outdated packages
+        id: check-outdated
+        run: |
+          # Check for outdated packages
+          echo "## Outdated Homebrew packages:" > brew-updates.txt
+          if brew outdated --verbose >> brew-updates.txt 2>&1; then
+            if [ -s brew-updates.txt ]; then
+              echo "has-updates=true" >> $GITHUB_OUTPUT
+            else
+              echo "No outdated packages"
+              echo "has-updates=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "has-updates=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Brewfile
+        if: steps.check-outdated.outputs.has-updates == 'true'
+        run: |
+          # Upgrade all packages
+          brew upgrade --force
+
+          # Regenerate Brewfile with updated versions
+          brew bundle dump --force --file=Brewfile.new
+
+          # Check if there are meaningful changes
+          if ! diff -q Brewfile Brewfile.new > /dev/null; then
+            mv Brewfile.new Brewfile
+            echo "Brewfile updated"
+          else
+            echo "No changes to Brewfile"
+            rm Brewfile.new
+          fi
+
+      - name: Create pull request for Brewfile
+        if: steps.check-outdated.outputs.has-updates == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            chore: update Brewfile dependencies
+
+            Automated Homebrew package update
+          title: "chore: update Brewfile dependencies"
+          body: |
+            ## Automated Brewfile Update
+
+            This PR updates the Homebrew packages to their latest versions.
+
+            ${{ steps.check-outdated.outputs.brew-updates }}
+
+            ### Checklist
+            - [ ] Review package changes
+            - [ ] Test on macOS with `brew bundle`
+
+            ---
+            *This PR was created automatically by the update-deps workflow*
+          branch: update-brewfile
+          delete-branch: true
+          labels: |
+            dependencies
+            homebrew
+            automated

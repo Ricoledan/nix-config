@@ -1,5 +1,10 @@
 # Rico's Development Environment
 
+[![CI](https://github.com/Ricoledan/nix-config/actions/workflows/ci.yml/badge.svg)](https://github.com/Ricoledan/nix-config/actions/workflows/ci.yml)
+[![Update Dependencies](https://github.com/Ricoledan/nix-config/actions/workflows/update-deps.yml/badge.svg)](https://github.com/Ricoledan/nix-config/actions/workflows/update-deps.yml)
+[![Nix Flake](https://img.shields.io/badge/nix-flake-blue.svg)](https://nixos.wiki/wiki/Flakes)
+[![Home Manager](https://img.shields.io/badge/home--manager-24.05-green.svg)](https://github.com/nix-community/home-manager)
+
 Cross-platform Nix flake configuration with Home Manager integration, following best practices for maintainability and security.
 
 ## Core Principles
@@ -37,6 +42,13 @@ Cross-platform Nix flake configuration with Home Manager integration, following 
 - **Secure**: Built-in secret management guidelines
 - **Fast**: Optimized with Nix caches and direnv integration
 - **Pragmatic**: Uses platform-native tools when optimal (see [DECISIONS.md](DECISIONS.md))
+
+## Documentation
+
+- **[Module Documentation](docs/modules.md)** - Detailed information about each module
+- **[Common Workflows](docs/workflows.md)** - Day-to-day usage and tasks
+- **[Troubleshooting Guide](docs/troubleshooting.md)** - Solutions to common issues
+- **[Architectural Decisions](DECISIONS.md)** - Rationale behind design choices
 
 ## Quick Start
 

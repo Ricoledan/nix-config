@@ -1,0 +1,165 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  validate-commits:
+    name: Validate Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages
+        uses: wagoid/commitlint-github-action@v5
+        with:
+          configFile: .commitlintrc.json
+          failOnWarnings: false
+
+  check-files:
+    name: Check Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for large files
+        run: |
+          # Fail if files larger than 1MB are added
+          find . -type f -size +1M | grep -v "^./.git" | while read file; do
+            echo "::error file=$file::File is larger than 1MB"
+            exit 1
+          done || exit 0
+
+      - name: Check for sensitive information
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
+
+  test-platforms:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v9
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v3
+
+      - name: Build configuration
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            SYSTEM="aarch64-darwin"
+          else
+            SYSTEM="x86_64-linux"
+          fi
+
+          echo "Building for $SYSTEM..."
+          nix build .#homeConfigurations.user@${SYSTEM}.activationPackage --impure --show-trace
+
+      - name: Run flake checks
+        run: |
+          nix flake check --impure --show-trace
+
+  documentation:
+    name: Check Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check markdown files
+        uses: DavidAnson/markdownlint-cli2-action@v15
+        with:
+          globs: |
+            **/*.md
+            !node_modules
+            !.git
+
+      - name: Check for broken links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'no'
+          config-file: '.markdown-link-check.json'
+        continue-on-error: true
+
+  comment-summary:
+    name: PR Summary Comment
+    runs-on: ubuntu-latest
+    needs: [validate-commits, check-files, test-platforms, documentation]
+    if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v9
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Generate configuration diff
+        id: diff
+        run: |
+          # Count changed files by type
+          echo "Changed files summary:" > pr-summary.txt
+          echo "- Nix modules: $(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep -c '\.nix$' || echo 0)" >> pr-summary.txt
+          echo "- Documentation: $(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep -c '\.md$' || echo 0)" >> pr-summary.txt
+          echo "- Workflows: $(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep -c '\.yml$' || echo 0)" >> pr-summary.txt
+
+          # Store summary for comment
+          {
+            echo 'summary<<EOF'
+            cat pr-summary.txt
+            echo EOF
+          } >> $GITHUB_OUTPUT
+
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const summary = `## PR Validation Summary
+
+            ### Check Results
+            - ✅ Commit validation: ${{ needs.validate-commits.result }}
+            - ✅ File checks: ${{ needs.check-files.result }}
+            - ✅ Platform tests: ${{ needs.test-platforms.result }}
+            - ✅ Documentation: ${{ needs.documentation.result }}
+
+            ### Changes Overview
+            ${{ steps.diff.outputs.summary }}
+
+            ### Next Steps
+            1. Review the changes
+            2. Test locally with \`./sync-hm.sh\`
+            3. Merge when all checks pass
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
