@@ -49,6 +49,7 @@ with pkgs.lib;
     xh
     tree
     yt-dlp
+    ffmpeg
     claude-code
     openssh
   ];
