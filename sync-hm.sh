@@ -17,10 +17,10 @@ echo ""
 # The key is using --impure to allow environment variable access
 if command -v home-manager &> /dev/null; then
     echo "Using installed home-manager..."
-    home-manager switch --flake ".#user@${SYSTEM}" --impure
+    home-manager switch --flake ".#user@${SYSTEM}" --impure -b backup
 else
     echo "Bootstrapping home-manager..."
-    nix run home-manager/master -- switch --flake ".#user@${SYSTEM}" --impure
+    nix run home-manager/master -- switch --flake ".#user@${SYSTEM}" --impure -b backup
 fi
 
 echo ""
