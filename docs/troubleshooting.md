@@ -321,15 +321,71 @@ This is addressed with TODO comments in the code. Will be fixed when `initConten
 2. Check proxy settings
 3. Verify network connectivity
 
+## CI/CD Issues
+
+### GitHub Actions: Resource not accessible by integration
+
+**Symptom:**
+```
+Error: Resource not accessible by integration
+```
+
+**Solution:**
+This occurs when GitHub Actions doesn't have permission to write security events.
+
+**Option 1:** Use the simplified CI workflow
+```yaml
+# .github/workflows/ci-simple.yml is available as alternative
+# It skips security scanning but performs all other checks
+```
+
+**Option 2:** Fix repository permissions
+1. Go to Settings → Code security and analysis
+2. Enable "Dependency graph" and "Code scanning"
+3. Or go to Settings → Actions → General
+4. Set "Workflow permissions" to "Read and write"
+
+**Option 3:** Disable security scanning
+Comment out or remove the `security-scan` job in `.github/workflows/ci.yml`
+
+### Workflow failing on macOS
+
+**Symptom:**
+```
+error: a 'aarch64-darwin' with features {} is required
+```
+
+**Solution:**
+The CI uses `aarch64-darwin` for macOS. If testing locally on Intel Mac:
+```bash
+# Use x86_64-darwin instead
+nix build .#homeConfigurations.user@x86_64-darwin.activationPackage
+```
+
+### Dependency update PR conflicts
+
+**Symptom:**
+Automated PRs from update-deps workflow have conflicts
+
+**Solution:**
+1. Close the automated PR
+2. Manually update:
+```bash
+nix flake update
+git add flake.lock
+git commit -m "chore: update flake inputs"
+```
+
 ## Getting Help
 
 If you encounter an issue not covered here:
 
 1. **Check the module documentation:** [modules.md](modules.md)
-2. **Review recent changes:** `git log --oneline -10`
-3. **Use verbose output:** `./sync-hm.sh --show-trace`
-4. **Search existing issues:** [GitHub Issues](https://github.com/yourusername/nix-config/issues)
-5. **Create a new issue with:**
+2. **Check workflow documentation:** `.github/workflows/README.md`
+3. **Review recent changes:** `git log --oneline -10`
+4. **Use verbose output:** `./sync-hm.sh --show-trace`
+5. **Search existing issues:** [GitHub Issues](https://github.com/yourusername/nix-config/issues)
+6. **Create a new issue with:**
    - Error message
    - Steps to reproduce
    - System information: `nix-info -m`

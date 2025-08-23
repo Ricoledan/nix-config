@@ -530,6 +530,28 @@ To manually trigger workflows:
 - Select workflow
 - Click "Run workflow"
 
+## CI/CD Workflows
+
+### Available GitHub Actions
+
+The repository includes several automated workflows:
+
+1. **ci.yml** - Main CI pipeline with security scanning
+2. **ci-simple.yml** - Alternative CI without security features (use if permission issues)
+3. **update-deps.yml** - Weekly dependency updates
+4. **pr-validation.yml** - Pull request validation
+
+### Workflow Status
+
+Check the Actions tab on GitHub to see workflow runs and status.
+
+### Troubleshooting CI Issues
+
+If you see "Resource not accessible by integration" errors:
+- Use the `ci-simple.yml` workflow instead
+- Or enable GitHub Advanced Security in repository settings
+- See `.github/workflows/README.md` for detailed fixes
+
 ## Quick Reference
 
 ### Essential Commands

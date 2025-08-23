@@ -1,6 +1,7 @@
 # Rico's Development Environment
 
 [![CI](https://github.com/Ricoledan/nix-config/actions/workflows/ci.yml/badge.svg)](https://github.com/Ricoledan/nix-config/actions/workflows/ci.yml)
+[![CI Simple](https://github.com/Ricoledan/nix-config/actions/workflows/ci-simple.yml/badge.svg)](https://github.com/Ricoledan/nix-config/actions/workflows/ci-simple.yml)
 [![Update Dependencies](https://github.com/Ricoledan/nix-config/actions/workflows/update-deps.yml/badge.svg)](https://github.com/Ricoledan/nix-config/actions/workflows/update-deps.yml)
 [![Nix Flake](https://img.shields.io/badge/nix-flake-blue.svg)](https://nixos.wiki/wiki/Flakes)
 [![Home Manager](https://img.shields.io/badge/home--manager-24.05-green.svg)](https://github.com/nix-community/home-manager)
@@ -38,10 +39,11 @@ Cross-platform Nix flake configuration with Home Manager integration, following 
 
 - **Cross-platform**: Works seamlessly on macOS (aarch64) and Linux (x86_64)
 - **Declarative**: All configuration in code, fully reproducible
-- **Automated**: Update scripts, CI/CD integration, format checking
-- **Secure**: Built-in secret management guidelines
+- **Automated**: Multiple CI/CD workflows, automated dependency updates, format checking
+- **Secure**: Built-in secret management guidelines, security scanning (when available)
 - **Fast**: Optimized with Nix caches and direnv integration
 - **Pragmatic**: Uses platform-native tools when optimal (see [DECISIONS.md](DECISIONS.md))
+- **Well-documented**: Comprehensive guides for modules, workflows, and troubleshooting
 
 ## Documentation
 
