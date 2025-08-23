@@ -24,7 +24,7 @@ The core principles are defined in the main README.md. See [Core Principles sect
 ## Platform-Specific Considerations
 
 ### macOS
-- Some tools managed via Homebrew (see `home/modules/homebrew.nix`)
+- Some tools managed via Homebrew (see `Brewfile` in repository root)
 - Podman requires Homebrew due to macOS integration issues
 - AeroSpace window manager configuration included
 

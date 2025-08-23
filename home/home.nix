@@ -35,10 +35,7 @@ in
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
-  } // (if pkgs.stdenv.isDarwin then {
-    # AeroSpace window manager config (macOS only)
-    ".aerospace.toml".source = ../config/aerospace.toml;
-  } else { });
+  };
 
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
@@ -63,17 +60,22 @@ in
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  # Enable direnv for automatic environment loading
-  programs.direnv = {
-    enable = true;
-    enableZshIntegration = false; # We manually add this after P10k instant prompt
-    nix-direnv.enable = true;
-  };
 
-  # Import zsh configuration
+  # Import modular configuration
   imports = [
-    ./modules/zsh.nix
-    ./modules/neovim.nix
+    # Shell configuration
+    ./modules/shell/zsh.nix
+
+    # Editor configuration
+    ./modules/editors/neovim.nix
+
+    # Tool configurations
+    ./modules/tools/git.nix
+    ./modules/tools/direnv.nix
+
+    # Platform-specific configuration
+    ./modules/platform/darwin.nix
+    ./modules/platform/linux.nix
   ];
 
   # Enable bash for compatibility

@@ -44,6 +44,7 @@
 
       ''
         # Hook direnv after instant prompt to avoid console output issues
+        # This is done here instead of through enableZshIntegration to avoid P10k instant prompt issues
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
 
         # Source powerlevel10k theme
@@ -100,11 +101,10 @@
 
     # Aliases
     shellAliases = {
-      # Add your custom aliases here
+      # File system
       ll = "ls -la";
-      gs = "git status";
-      gc = "git commit";
-      gp = "git push";
+      la = "ls -A";
+      l = "ls -CF";
 
       # Replace cd with zoxide
       cd = "z";

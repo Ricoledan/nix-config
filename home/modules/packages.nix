@@ -7,16 +7,12 @@ with pkgs.lib;
   packages = with pkgs; [
     # Nix Tools
     nixpkgs-fmt
-    nix-direnv
 
-    # Shell
-    zsh
+    # Shell and terminal tools
     zoxide
     tmux
 
-    # Version Control & Development
-    git
-    gh
+    # Development Tools
     vscode
 
     # Container & DevOps
