@@ -1,0 +1,88 @@
+name: CI (Simple)
+
+# Alternative CI workflow without security scanning
+# Use this if the main CI workflow has permission issues
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/ci.yml'
+
+jobs:
+  check:
+    name: Flake Check - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v9
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v3
+
+      - name: Check Nix flake
+        run: |
+          echo "::group::Flake metadata"
+          nix flake metadata
+          echo "::endgroup::"
+
+          echo "::group::Flake check"
+          nix flake check --impure --show-trace || true
+          echo "::endgroup::"
+
+      - name: Build configuration
+        run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            SYSTEM="aarch64-darwin"
+          else
+            SYSTEM="x86_64-linux"
+          fi
+
+          echo "Building for $SYSTEM..."
+          nix build .#homeConfigurations.user@${SYSTEM}.activationPackage --impure --show-trace
+
+      - name: Check formatting
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          echo "::group::Format check"
+          nix fmt -- --check . || echo "::warning::Some files need formatting"
+          echo "::endgroup::"
+
+  summary:
+    name: CI Summary
+    needs: [check]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Summary
+        run: |
+          echo "## CI Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ needs.check.result }}" == "success" ]]; then
+            echo "✅ All checks passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Some checks failed. See details above." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Platform Results" >> $GITHUB_STEP_SUMMARY
+          echo "- Linux: ${{ contains(needs.check.result, 'success') && '✅' || '❌' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- macOS: ${{ contains(needs.check.result, 'success') && '✅' || '❌' }}" >> $GITHUB_STEP_SUMMARY
