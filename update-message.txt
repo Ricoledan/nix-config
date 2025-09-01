@@ -1,0 +1,7 @@
+## Current versions:
+- home-manager: 27a26be5
+- nixpkgs: 372d9eee
+
+## New versions:
+- home-manager: fccb44df
+- nixpkgs: 37ff64b7
