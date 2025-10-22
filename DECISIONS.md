@@ -38,6 +38,35 @@ Use Homebrew to manage Podman, podman-compose, and Podman Desktop on macOS while
 
 ---
 
+### 2025-10-22: Pin Atuin to Stable Nixpkgs
+
+**Status**: Accepted
+
+**Context**:
+- CI builds failing due to Ruby/Nokogiri compilation issues in latest nixpkgs-unstable
+- The failure chain: nokogiri → ronn → bats → bash-preexec → Home Manager build failure
+- Atuin (shell history tool) was transitively depending on these Ruby-based tools
+- Blocking all configuration updates and deploys
+
+**Decision**:
+Pin Atuin specifically to stable nixpkgs (24.05) while keeping all other packages on unstable.
+
+**Consequences**:
+- ✅ CI builds pass immediately
+- ✅ Atuin functionality preserved
+- ✅ Other packages stay on latest versions
+- ✅ No user-facing changes
+- ❌ Mixed package sources (stable + unstable)
+- ❌ Additional complexity in flake.nix
+
+**Alternatives Considered**:
+1. Pin entire nixpkgs to stable - Too conservative, loses latest packages
+2. Disable Atuin temporarily - Loses valuable shell history functionality
+3. Wait for upstream fix - Blocks development indefinitely
+4. Override Ruby/Nokogiri versions - Too complex and fragile
+
+---
+
 ## Template for New Decisions
 
 ### YYYY-MM-DD: [Decision Title]

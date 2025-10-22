@@ -73,6 +73,9 @@ in
     ./modules/tools/git.nix
     ./modules/tools/direnv.nix
 
+    # Secret management
+    ./modules/secrets.nix
+
     # Platform-specific configuration
     ./modules/platform/darwin.nix
     ./modules/platform/linux.nix

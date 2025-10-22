@@ -1,9 +1,10 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, pkgs-stable, ... }:
 
 {
   # Enable Atuin
   programs.atuin = {
     enable = true;
+    package = pkgs-stable.atuin;
     enableZshIntegration = true;
     settings = {
       auto_sync = true;
@@ -121,6 +122,7 @@
   home.packages = with pkgs; [
     zsh-powerlevel10k
     fastfetch
+    zoxide
   ];
 
   # Ensure p10k config persists
