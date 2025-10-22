@@ -21,6 +21,13 @@ repos:
       - id: end-of-file-fixer
       - id: check-merge-conflict
 
+  # Markdown linting to match GitHub Actions
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.18.1
+    hooks:
+      - id: markdownlint-cli2
+        args: ["**/*.md", "!.direnv/**"]
+
   # Prevent secrets in config files
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.18.1
