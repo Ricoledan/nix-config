@@ -16,12 +16,14 @@ This guide covers common issues and their solutions when working with this Nix c
 ### Nix is not installed
 
 **Symptom:**
+
 ```bash
 command not found: nix
 ```
 
 **Solution:**
 Install Nix using the Determinate Systems installer:
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 ```
@@ -29,12 +31,14 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 ### Home Manager not found
 
 **Symptom:**
+
 ```bash
 error: attribute 'home-manager' in selection path 'home-manager' not found
 ```
 
 **Solution:**
 The flake will automatically fetch home-manager. Ensure you're using the flake-enabled Nix:
+
 ```bash
 nix --version  # Should show 2.18 or higher
 ```
@@ -42,6 +46,7 @@ nix --version  # Should show 2.18 or higher
 ### Experimental features not enabled
 
 **Symptom:**
+
 ```bash
 error: experimental Nix feature 'nix-command' is disabled
 error: experimental Nix feature 'flakes' is disabled
@@ -49,6 +54,7 @@ error: experimental Nix feature 'flakes' is disabled
 
 **Solution:**
 Add to `~/.config/nix/nix.conf` or `/etc/nix/nix.conf`:
+
 ```conf
 experimental-features = nix-command flakes
 ```
@@ -58,29 +64,34 @@ experimental-features = nix-command flakes
 ### Git tree has uncommitted changes
 
 **Symptom:**
+
 ```bash
 warning: Git tree '/Users/username/nix-config' has uncommitted changes
 ```
 
 **Solution:**
 This is a warning, not an error. To suppress it:
+
 1. Commit your changes: `git add -A && git commit -m "WIP"`
 2. Or use `--impure` flag (already in sync-hm.sh)
 
 ### File would be clobbered
 
 **Symptom:**
+
 ```bash
 Existing file '/Users/username/.config/git/ignore' would be clobbered
 ```
 
 **Solution:**
 Back up existing files and use the `-b` flag:
+
 ```bash
 home-manager switch --flake .#user@$(nix eval --impure --expr 'builtins.currentSystem' --raw) --impure -b backup
 ```
 
 Or manually backup:
+
 ```bash
 mv ~/.config/git/ignore ~/.config/git/ignore.backup
 ./sync-hm.sh
@@ -89,11 +100,13 @@ mv ~/.config/git/ignore ~/.config/git/ignore.backup
 ### Module not found
 
 **Symptom:**
+
 ```bash
 error: path '/nix/store/.../home/modules/example.nix' does not exist
 ```
 
 **Solution:**
+
 1. Ensure all new files are staged in git: `git add -A`
 2. Check the import path is correct relative to the importing file
 3. Verify file actually exists: `ls -la home/modules/`
@@ -101,17 +114,20 @@ error: path '/nix/store/.../home/modules/example.nix' does not exist
 ### Infinite recursion
 
 **Symptom:**
+
 ```bash
 error: infinite recursion encountered
 ```
 
 **Solution:**
 Common causes:
+
 1. Circular imports between modules
 2. Recursive option definitions
 3. Using `config.option` in the definition of `option`
 
 Debug by:
+
 1. Comment out recent changes
 2. Use `--show-trace` to identify the loop
 3. Check for circular dependencies
@@ -121,12 +137,14 @@ Debug by:
 ### macOS: Homebrew not found
 
 **Symptom:**
+
 ```bash
 Homebrew is not installed. Please install it first:
 ```
 
 **Solution:**
 Install Homebrew:
+
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
@@ -134,12 +152,14 @@ Install Homebrew:
 ### macOS: Architecture mismatch
 
 **Symptom:**
+
 ```bash
 error: a 'aarch64-darwin' with features {} is required, but I am a 'x86_64-darwin'
 ```
 
 **Solution:**
 Use Rosetta or ensure you're using the correct system:
+
 ```bash
 # Check your system
 uname -m
@@ -151,12 +171,14 @@ uname -m
 ### Linux: Missing clipboard support
 
 **Symptom:**
+
 ```bash
 error: xclip: command not found
 ```
 
 **Solution:**
 The Linux platform module should install clipboard utilities. Ensure it's imported:
+
 ```nix
 imports = [
   ./modules/platform/linux.nix
@@ -168,11 +190,13 @@ imports = [
 ### Zsh configuration not loading
 
 **Symptom:**
+
 - P10k prompt not showing
 - Aliases not working
 - Completions missing
 
 **Solution:**
+
 1. Ensure zsh is your default shell: `chsh -s $(which zsh)`
 2. Restart your terminal
 3. Check if `.zshrc` is symlinked: `ls -la ~/.zshrc`
@@ -181,11 +205,13 @@ imports = [
 ### Neovim plugins not loading
 
 **Symptom:**
+
 - LazyVim not starting
 - LSP not working
 - Plugins missing
 
 **Solution:**
+
 1. Clear Neovim cache: `rm -rf ~/.local/share/nvim ~/.cache/nvim`
 2. Open Neovim and run: `:Lazy sync`
 3. Check for errors: `:checkhealth`
@@ -193,13 +219,16 @@ imports = [
 ### Git configuration not applied
 
 **Symptom:**
+
 - Git aliases not working
 - Wrong user information
 
 **Solution:**
+
 1. Check git config: `git config --list --show-origin`
 2. Ensure git module is imported in home.nix
 3. Override with your info:
+
 ```nix
 programs.git = {
   userName = "Your Name";
@@ -210,10 +239,12 @@ programs.git = {
 ### Direnv not activating
 
 **Symptom:**
+
 - `.envrc` files ignored
 - No automatic environment switching
 
 **Solution:**
+
 1. Allow the directory: `direnv allow`
 2. Check direnv status: `direnv status`
 3. Ensure hook is loaded: `eval "$(direnv hook zsh)"`
@@ -224,11 +255,13 @@ programs.git = {
 ### Failed to push (uncommitted changes)
 
 **Symptom:**
+
 ```bash
 error: failed to push some refs
 ```
 
 **Solution:**
+
 1. Commit your changes first
 2. Or stash them: `git stash`
 3. Then push: `git push`
@@ -236,11 +269,13 @@ error: failed to push some refs
 ### Merge conflicts in flake.lock
 
 **Symptom:**
+
 ```bash
 CONFLICT (content): Merge conflict in flake.lock
 ```
 
 **Solution:**
+
 ```bash
 # Accept upstream version
 git checkout --theirs flake.lock
@@ -255,22 +290,27 @@ git checkout --ours flake.lock
 ### Slow Home Manager activation
 
 **Symptom:**
+
 - `home-manager switch` takes a long time
 - Hanging during activation
 
 **Solution:**
+
 1. Use binary cache:
+
 ```bash
 nix-env -iA cachix -f https://cachix.org/api/v1/install
 cachix use nix-community
 ```
 
-2. Limit parallel jobs:
+1. Limit parallel jobs:
+
 ```bash
 home-manager switch --max-jobs 2
 ```
 
-3. Check for large files being copied:
+1. Check for large files being copied:
+
 ```bash
 du -sh ~/.config/* | sort -h
 ```
@@ -278,10 +318,13 @@ du -sh ~/.config/* | sort -h
 ### High disk usage
 
 **Symptom:**
+
 - `/nix/store` consuming too much space
 
 **Solution:**
+
 1. Garbage collect old generations:
+
 ```bash
 # List generations
 home-manager generations
@@ -293,7 +336,8 @@ home-manager expire-generations "-7 days"
 nix-collect-garbage -d
 ```
 
-2. Optimize store:
+1. Optimize store:
+
 ```bash
 nix-store --optimise
 ```
@@ -310,6 +354,7 @@ This is addressed with TODO comments in the code. Will be fixed when `initConten
 ### "Cannot allocate memory"
 
 **Solution:**
+
 1. Check available memory: `free -h`
 2. Close other applications
 3. Reduce Nix parallel jobs: `--max-jobs 1`
@@ -317,6 +362,7 @@ This is addressed with TODO comments in the code. Will be fixed when `initConten
 ### "SSL certificate problem"
 
 **Solution:**
+
 1. Update certificates: `nix-env -iA nixpkgs.cacert`
 2. Check proxy settings
 3. Verify network connectivity
@@ -326,7 +372,8 @@ This is addressed with TODO comments in the code. Will be fixed when `initConten
 ### GitHub Actions: Resource not accessible by integration
 
 **Symptom:**
-```
+
+```text
 Error: Resource not accessible by integration
 ```
 
@@ -334,12 +381,14 @@ Error: Resource not accessible by integration
 This occurs when GitHub Actions doesn't have permission to write security events.
 
 **Option 1:** Use the simplified CI workflow
+
 ```yaml
 # .github/workflows/ci-simple.yml is available as alternative
 # It skips security scanning but performs all other checks
 ```
 
 **Option 2:** Fix repository permissions
+
 1. Go to Settings → Code security and analysis
 2. Enable "Dependency graph" and "Code scanning"
 3. Or go to Settings → Actions → General
@@ -351,12 +400,14 @@ Comment out or remove the `security-scan` job in `.github/workflows/ci.yml`
 ### Workflow failing on macOS
 
 **Symptom:**
-```
+
+```text
 error: a 'aarch64-darwin' with features {} is required
 ```
 
 **Solution:**
 The CI uses `aarch64-darwin` for macOS. If testing locally on Intel Mac:
+
 ```bash
 # Use x86_64-darwin instead
 nix build .#homeConfigurations.user@x86_64-darwin.activationPackage
@@ -368,8 +419,10 @@ nix build .#homeConfigurations.user@x86_64-darwin.activationPackage
 Automated PRs from update-deps workflow have conflicts
 
 **Solution:**
+
 1. Close the automated PR
 2. Manually update:
+
 ```bash
 nix flake update
 git add flake.lock
@@ -425,12 +478,14 @@ nix-instantiate --parse home/modules/example.nix
 If everything is broken:
 
 1. **Backup current state:**
+
 ```bash
 cp -r ~/.config ~/.config.backup
 cp -r ~/nix-config ~/nix-config.backup
 ```
 
-2. **Reset to clean state:**
+1. **Reset to clean state:**
+
 ```bash
 cd ~/nix-config
 git stash
@@ -438,14 +493,16 @@ git checkout main
 git pull origin main
 ```
 
-3. **Rebuild from scratch:**
+1. **Rebuild from scratch:**
+
 ```bash
 home-manager expire-generations "-0 seconds"
 nix-collect-garbage -d
 ./sync-hm.sh
 ```
 
-4. **Restore from backup if needed:**
+1. **Restore from backup if needed:**
+
 ```bash
 cp -r ~/.config.backup/* ~/.config/
 ```

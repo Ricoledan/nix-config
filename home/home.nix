@@ -73,11 +73,14 @@ in
     ./modules/tools/git.nix
     ./modules/tools/direnv.nix
 
+    # Secret management
+    ./modules/secrets.nix
+
     # Platform-specific configuration
     ./modules/platform/darwin.nix
     ./modules/platform/linux.nix
   ];
 
-  # Enable bash for compatibility
-  programs.bash.enable = true;
+  # Disable bash for now to avoid Ruby/Nokogiri dependency chain through bash-preexec
+  # programs.bash.enable = true;
 }

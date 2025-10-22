@@ -121,6 +121,7 @@
   home.packages = with pkgs; [
     zsh-powerlevel10k
     fastfetch
+    zoxide
   ];
 
   # Ensure p10k config persists

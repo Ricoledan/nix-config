@@ -5,23 +5,27 @@ This directory contains CI/CD workflows for the Nix configuration repository.
 ## Workflows
 
 ### ci.yml - Main CI Pipeline
+
 - Runs on every push and PR to main branch
 - Tests on Ubuntu and macOS
 - Performs flake checks, formatting validation, and security scanning
 - Requires security-events write permission for SARIF upload
 
 ### ci-simple.yml - Simplified CI (Alternative)
+
 - Alternative workflow without security scanning
 - Use if main CI has permission issues
 - Focuses on core functionality testing
 
 ### update-deps.yml - Automated Dependency Updates
+
 - Runs weekly (Monday 9 AM UTC)
 - Updates Nix flake inputs
 - Updates Homebrew packages
 - Creates PRs automatically
 
 ### pr-validation.yml - Pull Request Validation
+
 - Validates commits, files, and documentation
 - Posts summary comments on PRs
 - Checks for sensitive information
@@ -31,24 +35,29 @@ This directory contains CI/CD workflows for the Nix configuration repository.
 If you see "Resource not accessible by integration" errors:
 
 ### Option 1: Enable GitHub Advanced Security (Recommended)
+
 1. Go to Settings → Code security and analysis
 2. Enable "Dependency graph"
 3. Enable "Dependabot alerts"
 4. Enable "Code scanning" (if available)
 
 ### Option 2: Adjust Repository Settings
+
 1. Go to Settings → Actions → General
 2. Under "Workflow permissions", select:
    - "Read and write permissions"
    - Check "Allow GitHub Actions to create and approve pull requests"
 
 ### Option 3: Use Personal Access Token
+
 1. Create a PAT with `repo` and `security_events` scopes
 2. Add as repository secret: `SECURITY_TOKEN`
 3. Update workflow to use: `token: ${{ secrets.SECURITY_TOKEN }}`
 
 ### Option 4: Use Simplified CI
+
 If security scanning isn't needed:
+
 ```yaml
 # Disable the main CI workflow
 # Use ci-simple.yml instead
@@ -88,6 +97,7 @@ act -j check
    - Add secret: `ACTIONS_RUNNER_DEBUG` = `true`
 
 2. **Check workflow syntax:**
+
    ```bash
    # Validate YAML
    yamllint .github/workflows/*.yml
@@ -121,6 +131,7 @@ Add to your README:
 ## Contributing
 
 When adding new workflows:
+
 1. Follow existing naming conventions
 2. Add appropriate permissions
 3. Include error handling

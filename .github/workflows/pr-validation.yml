@@ -93,6 +93,7 @@ jobs:
         with:
           globs: |
             **/*.md
+            !.direnv/**
             !node_modules
             !.git
 
