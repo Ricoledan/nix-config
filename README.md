@@ -354,6 +354,7 @@ graph TD
 ```
 
 This script will:
+
 - Update nixpkgs and home-manager to latest versions
 - Show you what changed
 - Optionally commit the updates with detailed messages
@@ -479,7 +480,7 @@ brew bundle  # Ensure Brewfile apps are installed
 
 ## File Structure
 
-```
+```text
 .
 ├── flake.nix                 # Main Nix configuration with formatter & checks
 ├── flake.lock               # Locked dependencies
@@ -564,6 +565,7 @@ nix develop
 ```
 
 ### Podman Issues on macOS
+
 Podman is managed via Homebrew on macOS. See [docs/podman.md](docs/podman.md) for setup instructions.
 
 ## Security Best Practices
@@ -624,6 +626,7 @@ nix develop
 ## CI/CD Integration
 
 This repository includes GitHub Actions workflows that:
+
 - Run on every push to `main` and on pull requests
 - Check flake validity across macOS and Linux
 - Verify code formatting

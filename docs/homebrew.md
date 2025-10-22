@@ -5,6 +5,7 @@ This document covers Homebrew Bundle usage for managing macOS-specific applicati
 ## Overview
 
 Homebrew is used on macOS for applications that:
+
 - Have better macOS integration via Homebrew
 - Are not available in nixpkgs
 - Have issues when installed via Nix on macOS
@@ -43,7 +44,8 @@ To actually remove packages that aren't in the Brewfile:
 brew bundle cleanup --force
 ```
 
-**Note**: This will uninstall any Homebrew formulae, casks, and taps that are not listed in your Brewfile. Make sure to review the list first with the dry run command.
+**Note**: This will uninstall any Homebrew formulae, casks, and taps that are not listed in your Brewfile.
+Make sure to review the list first with the dry run command.
 
 ### Common issues
 
@@ -57,9 +59,11 @@ When you install a new package via Homebrew and want to keep it:
 
 1. Add it to the `Brewfile` manually, or
 2. Generate a Brewfile from currently installed packages:
+
    ```bash
    brew bundle dump --force
    ```
+
    (This overwrites the existing Brewfile with all currently installed packages)
 
 ## Best Practices

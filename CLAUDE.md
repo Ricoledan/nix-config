@@ -5,6 +5,7 @@ This file provides important context for Claude when working with this repositor
 ## Repository Overview
 
 This is a personal Nix configuration repository that manages development environments across macOS and Linux using:
+
 - Nix flakes for reproducible package management
 - Home Manager for user-specific configurations
 - Platform-specific tools (Homebrew on macOS) where necessary
@@ -19,16 +20,19 @@ This is a personal Nix configuration repository that manages development environ
 
 ## Key Principles
 
-The core principles are defined in the main README.md. See [Core Principles section](README.md#core-principles) for details. These guide all architectural decisions in this repository.
+The core principles are defined in the main README.md. See [Core Principles section](README.md#core-principles) for
+details. These guide all architectural decisions in this repository.
 
 ## Platform-Specific Considerations
 
 ### macOS
+
 - Some tools managed via Homebrew (see `Brewfile` in repository root)
 - Podman requires Homebrew due to macOS integration issues
 - AeroSpace window manager configuration included
 
 ### Linux
+
 - Pure Nix approach generally works better
 - Ubuntu-specific setup in `install-ubuntu.sh`
 
@@ -55,6 +59,7 @@ The core principles are defined in the main README.md. See [Core Principles sect
 ## Testing Changes
 
 Always test with:
+
 ```bash
 ./sync-hm.sh
 ```

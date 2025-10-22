@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, pkgs-stable, ... }:
 
 let
   packages = import ./modules/packages.nix { inherit pkgs; };
@@ -81,6 +81,6 @@ in
     ./modules/platform/linux.nix
   ];
 
-  # Enable bash for compatibility
-  programs.bash.enable = true;
+  # Disable bash for now to avoid Ruby/Nokogiri dependency chain through bash-preexec
+  # programs.bash.enable = true;
 }

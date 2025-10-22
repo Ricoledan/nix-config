@@ -2,7 +2,8 @@
 
 ## Why Homebrew for Podman on macOS?
 
-After extensive testing, we've decided to manage Podman and Podman Desktop through Homebrew on macOS rather than Nix. Here's why:
+After extensive testing, we've decided to manage Podman and Podman Desktop through Homebrew on macOS rather
+than Nix. Here's why:
 
 ### The Challenges with Nix
 
@@ -34,7 +35,9 @@ After extensive testing, we've decided to manage Podman and Podman Desktop throu
 ## Installation
 
 ### Prerequisites
+
 Ensure Homebrew is installed:
+
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
@@ -42,21 +45,25 @@ Ensure Homebrew is installed:
 ### Install Podman via Homebrew
 
 1. Apply the home-manager configuration:
+
    ```bash
    ./sync-hm.sh
    ```
 
 2. Install Homebrew packages:
+
    ```bash
    brew bundle --file=$HOME/.config/homebrew/Brewfile
    ```
 
 3. Set up Podman Mac Helper:
+
    ```bash
    sudo podman-mac-helper install
    ```
 
 4. Initialize Podman machine:
+
    ```bash
    podman machine init
    podman machine start
@@ -72,6 +79,7 @@ Ensure Homebrew is installed:
 ## Verification
 
 Check that everything is working:
+
 ```bash
 # Verify Podman installation
 podman --version
@@ -89,10 +97,12 @@ podman run -d -p 80:80 nginx:alpine
 ## Trade-offs
 
 ### What We Lose
+
 - Pure Nix reproducibility for Podman
 - Declarative version management for Podman
 
 ### What We Gain
+
 - Full macOS integration
 - All Podman features working correctly
 - No manual intervention after initial setup
@@ -100,4 +110,5 @@ podman run -d -p 80:80 nginx:alpine
 
 ## Future Considerations
 
-If the Nix podman package eventually includes podman-mac-helper and better macOS integration, we could revisit this decision. For now, Homebrew provides the most reliable Podman experience on macOS.
+If the Nix podman package eventually includes podman-mac-helper and better macOS integration, we could revisit
+this decision. For now, Homebrew provides the most reliable Podman experience on macOS.

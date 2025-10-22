@@ -53,6 +53,7 @@ nvim home/modules/shell/zsh.nix
 #### Nix Packages
 
 1. Find the package:
+
 ```bash
 # Search for packages
 nix search nixpkgs package-name
@@ -61,7 +62,8 @@ nix search nixpkgs package-name
 nix eval nixpkgs#package-name.meta.description
 ```
 
-2. Add to `home/modules/packages.nix`:
+1. Add to `home/modules/packages.nix`:
+
 ```nix
 packages = with pkgs; [
   existing-package
@@ -69,7 +71,8 @@ packages = with pkgs; [
 ];
 ```
 
-3. Apply changes:
+1. Apply changes:
+
 ```bash
 ./sync-hm.sh
 ```
@@ -77,11 +80,13 @@ packages = with pkgs; [
 #### Homebrew Packages (macOS)
 
 1. Search for package:
+
 ```bash
 brew search package-name
 ```
 
-2. Add to `Brewfile`:
+1. Add to `Brewfile`:
+
 ```ruby
 # For CLI tools
 brew "package-name"
@@ -93,7 +98,8 @@ cask "application-name"
 mas "App Name", id: 123456789
 ```
 
-3. Apply changes:
+1. Apply changes:
+
 ```bash
 brew bundle
 # Or just run sync-hm.sh which includes brew bundle
@@ -106,6 +112,7 @@ brew bundle
 
 1. Remove from `home/modules/packages.nix`
 2. Apply and clean up:
+
 ```bash
 ./sync-hm.sh
 # Optional: garbage collect old generations
@@ -117,6 +124,7 @@ nix-collect-garbage -d
 
 1. Remove from `Brewfile`
 2. Clean up:
+
 ```bash
 brew bundle cleanup
 brew bundle --force cleanup  # Actually remove packages
@@ -158,12 +166,14 @@ brew bundle dump --force
 ### Adding a New Module
 
 1. Create the module file:
+
 ```bash
 # Choose appropriate category
 touch home/modules/tools/new-tool.nix
 ```
 
-2. Write the module:
+1. Write the module:
+
 ```nix
 { config, pkgs, lib, ... }:
 
@@ -175,7 +185,8 @@ touch home/modules/tools/new-tool.nix
 }
 ```
 
-3. Import in `home/home.nix`:
+1. Import in `home/home.nix`:
+
 ```nix
 imports = [
   # ... existing imports
@@ -183,7 +194,8 @@ imports = [
 ];
 ```
 
-4. Test and apply:
+1. Test and apply:
+
 ```bash
 # Validate syntax
 nix-instantiate --parse home/modules/tools/new-tool.nix
@@ -195,11 +207,13 @@ nix-instantiate --parse home/modules/tools/new-tool.nix
 ### Modifying Existing Modules
 
 1. Edit the module:
+
 ```bash
 nvim home/modules/category/module.nix
 ```
 
-2. Test changes:
+1. Test changes:
+
 ```bash
 # Build without switching
 home-manager build --flake .#user@$(uname -m)-$(uname -s | tr '[:upper:]' '[:lower:]') --impure
@@ -211,6 +225,7 @@ home-manager build --flake .#user@$(uname -m)-$(uname -s | tr '[:upper:]' '[:low
 ### Platform-Specific Changes
 
 For macOS-only changes:
+
 ```nix
 # In home/modules/platform/darwin.nix
 config = lib.mkIf pkgs.stdenv.isDarwin {
@@ -219,6 +234,7 @@ config = lib.mkIf pkgs.stdenv.isDarwin {
 ```
 
 For Linux-only changes:
+
 ```nix
 # In home/modules/platform/linux.nix
 config = lib.mkIf pkgs.stdenv.isLinux {
@@ -231,12 +247,14 @@ config = lib.mkIf pkgs.stdenv.isLinux {
 ### Setting Up a New Project
 
 1. Create project directory:
+
 ```bash
 mkdir ~/projects/new-project
 cd ~/projects/new-project
 ```
 
-2. Create `.envrc` for direnv:
+1. Create `.envrc` for direnv:
+
 ```bash
 # For Nix projects
 echo "use nix" > .envrc
@@ -248,7 +266,8 @@ echo "layout python" > .envrc
 direnv allow
 ```
 
-3. Create `shell.nix` or `flake.nix`:
+1. Create `shell.nix` or `flake.nix`:
+
 ```nix
 # shell.nix
 { pkgs ? import <nixpkgs> {} }:
@@ -266,12 +285,14 @@ pkgs.mkShell {
 #### Python Development
 
 1. Create virtual environment (automatic with direnv):
+
 ```bash
 echo "layout python" > .envrc
 direnv allow
 ```
 
-2. Or use Nix shell:
+1. Or use Nix shell:
+
 ```nix
 # shell.nix
 { pkgs ? import <nixpkgs> {} }:
@@ -318,6 +339,7 @@ pkgs.mkShell {
 ### Regular Maintenance
 
 Weekly tasks:
+
 ```bash
 # Update dependencies
 nix flake update
@@ -331,6 +353,7 @@ home-manager expire-generations "-7 days"
 ```
 
 Monthly tasks:
+
 ```bash
 # Deep clean
 nix-collect-garbage -d
@@ -389,6 +412,7 @@ home-manager switch-generation 142
 
 1. Fork or clone the repository
 2. Customize for your needs:
+
 ```bash
 # Update git configuration
 nvim home/modules/tools/git.nix
@@ -398,7 +422,8 @@ nvim home/modules/tools/git.nix
 nvim home/modules/packages.nix
 ```
 
-3. Test locally:
+1. Test locally:
+
 ```bash
 ./sync-hm.sh
 ```
@@ -406,11 +431,13 @@ nvim home/modules/packages.nix
 ### Contributing Changes
 
 1. Create a feature branch:
+
 ```bash
 git checkout -b feature/your-feature
 ```
 
-2. Make changes and test:
+1. Make changes and test:
+
 ```bash
 # Make your changes
 nvim home/modules/...
@@ -422,7 +449,8 @@ nvim home/modules/...
 nix flake check --impure
 ```
 
-3. Commit with conventional commits:
+1. Commit with conventional commits:
+
 ```bash
 git add -A
 git commit -m "feat: add new feature
@@ -432,7 +460,8 @@ git commit -m "feat: add new feature
 - Why it was changed"
 ```
 
-4. Push and create PR:
+1. Push and create PR:
+
 ```bash
 git push origin feature/your-feature
 # Create PR on GitHub
@@ -462,6 +491,7 @@ nix flake update
 ### Creating Custom Flake Outputs
 
 Add to `flake.nix`:
+
 ```nix
 {
   outputs = { self, nixpkgs, ... }: {
@@ -480,6 +510,7 @@ Add to `flake.nix`:
 ```
 
 Use them:
+
 ```bash
 # Run custom package
 nix run .#my-script
@@ -491,6 +522,7 @@ nix develop .#python
 ### Multi-Machine Setup
 
 1. Create host-specific configurations:
+
 ```nix
 # flake.nix
 homeConfigurations = {
@@ -503,7 +535,8 @@ homeConfigurations = {
 };
 ```
 
-2. Switch based on machine:
+1. Switch based on machine:
+
 ```bash
 # On work machine
 home-manager switch --flake .#user@work
@@ -521,11 +554,13 @@ The repository includes GitHub Actions workflows:
 3. **Weekly:** Automated dependency updates
 
 To skip CI on a commit:
+
 ```bash
 git commit -m "feat: something [skip ci]"
 ```
 
 To manually trigger workflows:
+
 - Go to Actions tab on GitHub
 - Select workflow
 - Click "Run workflow"
@@ -548,6 +583,7 @@ Check the Actions tab on GitHub to see workflow runs and status.
 ### Troubleshooting CI Issues
 
 If you see "Resource not accessible by integration" errors:
+
 - Use the `ci-simple.yml` workflow instead
 - Or enable GitHub Advanced Security in repository settings
 - See `.github/workflows/README.md` for detailed fixes

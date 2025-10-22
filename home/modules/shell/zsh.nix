@@ -4,7 +4,6 @@
   # Enable Atuin
   programs.atuin = {
     enable = true;
-    package = pkgs-stable.atuin;
     enableZshIntegration = true;
     settings = {
       auto_sync = true;
