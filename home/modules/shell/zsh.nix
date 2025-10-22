@@ -1,4 +1,4 @@
-{ config, pkgs, lib, pkgs-stable, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Enable Atuin

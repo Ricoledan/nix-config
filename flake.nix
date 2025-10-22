@@ -3,22 +3,17 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager }:
+  outputs = { self, nixpkgs, home-manager }:
     let
       systems = [ "aarch64-darwin" "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
       pkgsFor = system: import nixpkgs {
-        inherit system;
-        config = { allowUnfree = true; };
-      };
-      pkgsStableFor = system: import nixpkgs-stable {
         inherit system;
         config = { allowUnfree = true; };
       };
@@ -64,7 +59,6 @@
             # Allow passing username and homeDirectory at runtime
             extraSpecialArgs = {
               inherit system;
-              pkgs-stable = pkgsStableFor system;
             };
           };
         in

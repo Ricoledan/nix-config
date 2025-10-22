@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-stable, ... }:
+{ config, pkgs, ... }:
 
 let
   packages = import ./modules/packages.nix { inherit pkgs; };
