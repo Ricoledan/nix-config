@@ -6,7 +6,8 @@
 [![Nix Flake](https://img.shields.io/badge/nix-flake-blue.svg)](https://nixos.wiki/wiki/Flakes)
 [![Home Manager](https://img.shields.io/badge/home--manager-24.05-green.svg)](https://github.com/nix-community/home-manager)
 
-Cross-platform Nix flake configuration with Home Manager integration, following best practices for maintainability and security.
+Cross-platform Nix flake configuration with Home Manager integration, following best practices for
+maintainability and security.
 
 ## Core Principles
 
@@ -55,6 +56,7 @@ Cross-platform Nix flake configuration with Home Manager integration, following 
 ## Quick Start
 
 ### Prerequisites
+
 - Nix installed (with flakes enabled)
 - Git installed
 
@@ -78,7 +80,8 @@ cd nix-config
 # - Applies the configuration
 
 # For manual runs, use:
-# nix run home-manager/master -- switch --flake .#user@$(nix eval --impure --expr 'builtins.currentSystem' --raw) --impure
+# nix run home-manager/master -- switch --flake .#user@$(nix eval --impure \
+#   --expr 'builtins.currentSystem' --raw) --impure
 
 # 4. Enter development shell (optional, for development work)
 nix develop
@@ -88,6 +91,7 @@ direnv allow
 ```
 
 ### What This Does
+
 1. **setup.sh**: Installs Homebrew (macOS only) and ensures Nix flakes are enabled
 2. **Home Manager activation**:
    - Installs all packages defined in `home/modules/packages.nix`
@@ -100,6 +104,7 @@ direnv allow
 ## Components Overview
 
 ### Core Technologies
+
 - **Nix Flakes**: Reproducible, declarative package management
 - **Home Manager**: User environment and dotfile management
 - **Homebrew** (macOS): GUI applications and system packages
@@ -107,6 +112,7 @@ direnv allow
 - **Direnv**: Automatic environment loading
 
 ### Development Tools (via Nix)
+
 - **Editors**: VSCode, Neovim
 - **Version Control**: Git, GitHub CLI (gh)
 - **Containers**: Managed via Homebrew on macOS (see [docs/podman.md](docs/podman.md))
@@ -119,6 +125,7 @@ direnv allow
   - AI: claude-code
 
 ### Shell Configuration
+
 - **Zsh** with:
   - Oh My Zsh (git, podman plugins)
   - Powerlevel10k theme
@@ -129,6 +136,7 @@ direnv allow
   - Fastfetch on startup
 
 ### Editor Configuration
+
 - **Neovim** with:
   - LazyVim distribution (full IDE experience)
   - LSP support for multiple languages
@@ -136,12 +144,14 @@ direnv allow
   - Custom plugin support in `~/.config/nvim/lua/plugins/`
 
 ### Window Management
+
 - **Aerospace**: Tiling window manager for macOS
   - Configuration in `config/aerospace.toml`
   - Managed by Home Manager
   - i3-like keybindings
 
 ### macOS Applications (via Homebrew)
+
 - **Development**: Ghostty (terminal), JetBrains Toolbox, Podman Desktop
 - **Productivity**: Alfred, Todoist, Fantastical, Notion, Bear, Obsidian
 - **Utilities**: 1Password, CleanMyMac, Caffeine, Aerospace (window manager)
@@ -155,7 +165,10 @@ direnv allow
 
 ### System Architecture
 
-This diagram shows the high-level architecture of the Nix configuration system. It illustrates how the three main entry scripts (`setup.sh`, `sync-hm.sh`, and `update.sh`) interact with the Nix flake system, which then configures the user environment through Home Manager. The platform layer shows how macOS uses Homebrew for certain packages while Linux uses pure Nix packages.
+This diagram shows the high-level architecture of the Nix configuration system. It illustrates how the
+three main entry scripts (`setup.sh`, `sync-hm.sh`, and `update.sh`) interact with the Nix flake system,
+which then configures the user environment through Home Manager. The platform layer shows how macOS uses
+Homebrew for certain packages while Linux uses pure Nix packages.
 
 ```mermaid
 graph TB
@@ -217,7 +230,10 @@ graph TB
 
 ### Module Dependencies
 
-This diagram illustrates the relationships between different configuration files and modules. The core `flake.nix` defines the overall system and references `home.nix`, which then imports various modules for packages, shell (zsh), and editor (neovim) configuration. External scripts interact with these files to set up, sync, or update the system.
+This diagram illustrates the relationships between different configuration files and modules. The core
+`flake.nix` defines the overall system and references `home.nix`, which then imports various modules for
+packages, shell (zsh), and editor (neovim) configuration. External scripts interact with these files to
+set up, sync, or update the system.
 
 ```mermaid
 graph LR
@@ -260,7 +276,10 @@ graph LR
 
 ### Data Flow
 
-This sequence diagram shows the step-by-step process that occurs when you run `./sync-hm.sh`. It demonstrates how the script detects your user environment, invokes Nix flake evaluation, passes configuration to Home Manager, and ultimately results in a fully configured user environment with all packages installed and configurations applied.
+This sequence diagram shows the step-by-step process that occurs when you run `./sync-hm.sh`. It
+demonstrates how the script detects your user environment, invokes Nix flake evaluation, passes
+configuration to Home Manager, and ultimately results in a fully configured user environment with all
+packages installed and configurations applied.
 
 ```mermaid
 sequenceDiagram
@@ -285,7 +304,11 @@ sequenceDiagram
 
 ### Platform-Specific Components
 
-This diagram clearly separates common components that work across all platforms from platform-specific implementations. It shows how the configuration handles differences between macOS and Linux, particularly highlighting that macOS uses Homebrew for GUI applications and Podman, while Linux can use pure Nix packages for everything. The `isDarwin` and `isLinux` conditions in the configuration determine which components are activated.
+This diagram clearly separates common components that work across all platforms from platform-specific
+implementations. It shows how the configuration handles differences between macOS and Linux, particularly
+highlighting that macOS uses Homebrew for GUI applications and Podman, while Linux can use pure Nix
+packages for everything. The `isDarwin` and `isLinux` conditions in the configuration determine which
+components are activated.
 
 ```mermaid
 graph TD
@@ -324,6 +347,7 @@ graph TD
 ## Automation & Maintenance
 
 ### Update Dependencies
+
 ```bash
 # Run the update script to update all flake inputs
 ./update.sh
@@ -340,6 +364,7 @@ This script will:
 This repository uses [pre-commit](https://pre-commit.com/) to ensure code quality and consistency.
 
 #### Installed Hooks
+
 - **nixpkgs-fmt**: Automatically formats `.nix` files to the standard style
 - **shellcheck**: Lints shell scripts for common errors and best practices
 - **trailing-whitespace**: Removes unnecessary whitespace at line endings
@@ -348,6 +373,7 @@ This repository uses [pre-commit](https://pre-commit.com/) to ensure code qualit
 - **gitleaks**: Scans for hardcoded secrets and credentials
 
 #### Usage
+
 ```bash
 # Hooks run automatically on git commit
 git commit -m "Your message"
@@ -366,6 +392,7 @@ git commit --no-verify -m "Emergency fix"
 ```
 
 ### Code Formatting
+
 ```bash
 # Format all Nix files
 nix fmt
@@ -375,6 +402,7 @@ nix fmt -- --check
 ```
 
 ### Run Checks
+
 ```bash
 # Run all flake checks
 nix flake check
@@ -386,6 +414,7 @@ nix flake metadata
 ## Common Workflows
 
 ### Daily Development
+
 ```bash
 # Start your day - enter the development environment
 nix develop
@@ -395,6 +424,7 @@ nix develop
 ```
 
 ### Making Configuration Changes
+
 ```bash
 # Edit configuration files
 vim home/home.nix              # Home Manager config
@@ -410,6 +440,7 @@ brew bundle
 ```
 
 ### Checking Home Manager News
+
 ```bash
 # View Home Manager news (updates, breaking changes, new features)
 home-manager news --flake ".#user@aarch64-darwin" --impure
@@ -419,6 +450,7 @@ home-manager news --flake ".#user@x86_64-linux" --impure
 ```
 
 ### Updating Packages
+
 ```bash
 # Update all Nix packages (recommended method)
 ./update.sh
@@ -433,6 +465,7 @@ brew bundle  # Ensure Brewfile apps are installed
 ```
 
 ### Adding New Tools
+
 ```bash
 # For CLI tools (cross-platform)
 # Edit flake.nix or home/modules/packages.nix
@@ -482,12 +515,14 @@ brew bundle  # Ensure Brewfile apps are installed
 ## Troubleshooting
 
 ### Home Manager Not Found
+
 ```bash
 # Run the sync script:
 ./sync-hm.sh
 ```
 
 ### LazyVim Not Working
+
 ```bash
 # Clear Neovim cache and plugins
 rm -rf ~/.local/share/nvim
@@ -502,6 +537,7 @@ nvim
 ```
 
 ### Zsh/P10k Issues
+
 ```bash
 # To modify p10k configuration:
 # Edit dotfiles/.p10k.zsh directly
@@ -509,6 +545,7 @@ nvim
 ```
 
 ### Nix Build Failures
+
 ```bash
 # Clear Nix store and rebuild
 nix-collect-garbage -d
@@ -517,6 +554,7 @@ nix flake update
 ```
 
 ### Environment Not Loading
+
 ```bash
 # Ensure direnv is allowed
 direnv allow
@@ -531,6 +569,7 @@ Podman is managed via Homebrew on macOS. See [docs/podman.md](docs/podman.md) fo
 ## Security Best Practices
 
 ### Secret Management
+
 - **Never commit secrets** to this repository
 - Use environment variables for API keys and tokens
 - Store secrets in 1Password and use the CLI integration (already configured)
@@ -540,12 +579,15 @@ Podman is managed via Homebrew on macOS. See [docs/podman.md](docs/podman.md) fo
   - 1Password CLI: `op read "op://vault/item/field"`
 
 ### Flake Configuration Trust
+
 When first using this flake, you'll be prompted to trust the cache configuration. Accept with:
+
 ```bash
 nix flake metadata --accept-flake-config
 ```
 
 ### Missing Commands
+
 ```bash
 # Check if in Nix shell
 which <command>
@@ -558,16 +600,19 @@ nix develop
 ## Platform-Specific Notes
 
 ### macOS
+
 - Homebrew handles GUI applications
 - System Integrity Protection may affect some tools
 - Use `mas` for Mac App Store apps
 
 ### Linux
+
 - GUI apps would use apt/snap/flatpak
 - Home directory is automatically detected
 - Some macOS-specific tools won't be available
 
 ### Multi-User/Multi-System Support
+
 - Configuration automatically detects:
   - Current username via `$USER` environment variable
   - Home directory via `$HOME` environment variable

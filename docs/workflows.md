@@ -589,6 +589,7 @@ brew list
 ### Environment Variables
 
 Set in your shell or `.envrc`:
+
 ```bash
 # Override user/home detection
 export USER="different-user"
