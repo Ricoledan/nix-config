@@ -152,7 +152,7 @@ direnv allow
 
 ### macOS Applications (via Homebrew)
 
-- **Development**: Ghostty (terminal), JetBrains Toolbox, Podman Desktop
+- **Development**: Ghostty (terminal), Podman Desktop
 - **Productivity**: Alfred, Todoist, Fantastical, Notion, Bear, Obsidian
 - **Utilities**: 1Password, CleanMyMac, Caffeine, Aerospace (window manager)
 - **Media**: Plex, mpv
