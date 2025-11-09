@@ -43,6 +43,37 @@ Use Homebrew to manage Podman, podman-compose, and Podman Desktop on macOS while
 
 ---
 
+### 2025-11-09: Use Homebrew for VSCode on macOS
+
+**Status**: Accepted
+
+**Context**:
+
+- VSCode was managed through Nix, which packages GUI apps as `.app` bundles
+- macOS protects application bundles with special permissions that prevent Nix from properly cleaning them up during
+  garbage collection
+- This causes persistent "Operation not permitted" errors when running `nix-collect-garbage`
+- The repository already uses Homebrew for other macOS GUI applications (Ghostty, Alfred, Obsidian, etc.)
+
+**Decision**:
+Use Homebrew to manage VSCode on macOS while keeping CLI development tools in Nix.
+
+**Consequences**:
+
+- ✅ No more macOS permission errors during Nix garbage collection
+- ✅ Consistent with existing pattern of using Homebrew for GUI apps
+- ✅ Better integration with macOS application management
+- ❌ Split package management between Nix and Homebrew
+- ❌ Less reproducible than pure Nix solution
+
+**Alternatives Considered**:
+
+1. Ignore the error - Harmless but clutters output and leaves orphaned store paths
+2. Manual cleanup - Requires sudo intervention and isn't automated
+3. Keep using Nix - Continues to cause permission errors on every garbage collection
+
+---
+
 ### 2025-10-22: Pin Atuin to Stable Nixpkgs
 
 **Status**: Superseded

@@ -101,6 +101,23 @@ direnv allow
    - Enables direnv for automatic environment loading
 3. **nix develop**: Provides a minimal shell (git, nixpkgs-fmt) before Home Manager activation
 
+### Important: Package Updates
+
+**Packages do not update automatically.** Your environment is reproducible and stable until you explicitly choose to
+update. This is a feature - you won't get surprise breakages from automatic updates.
+
+To update packages periodically:
+
+```bash
+# Update all Nix packages (recommended - shows changes and runs checks)
+./update.sh
+
+# Update Homebrew packages (macOS only)
+brew update && brew upgrade
+```
+
+See [Maintenance Schedule](#maintenance-schedule) for recommended update frequency.
+
 ## Components Overview
 
 ### Core Technologies
@@ -360,6 +377,52 @@ This script will:
 - Optionally commit the updates with detailed messages
 - Run flake checks to ensure everything works
 
+### Maintenance Schedule
+
+Regular maintenance keeps your environment secure and up-to-date. Here's a recommended schedule:
+
+#### Weekly Tasks
+
+```bash
+# Update Nix packages
+./update.sh
+
+# Update Homebrew packages (macOS only)
+brew update && brew upgrade
+
+# Clean up old generations (keep last 7 days)
+home-manager expire-generations "-7 days"
+```
+
+#### Monthly Tasks
+
+```bash
+# Deep clean unused packages
+nix-collect-garbage -d
+
+# Optimize Nix store (reclaim disk space)
+nix-store --optimise
+
+# Check disk usage
+du -sh /nix/store
+du -sh ~/.config/* | sort -h
+```
+
+#### As Needed
+
+```bash
+# Rollback if something breaks
+home-manager generations  # List available generations
+home-manager rollback      # Rollback to previous generation
+
+# Full backup before major changes
+git add -A
+git commit -m "Backup: $(date +%Y-%m-%d)"
+git push origin main
+```
+
+See [docs/workflows.md](docs/workflows.md) for more detailed maintenance workflows.
+
 ### Code Quality & Pre-commit Hooks
 
 This repository uses [pre-commit](https://pre-commit.com/) to ensure code quality and consistency.
@@ -452,18 +515,37 @@ home-manager news --flake ".#user@x86_64-linux" --impure
 
 ### Updating Packages
 
+**Important:** Packages do not auto-update. This keeps your environment stable and reproducible.
+
+#### Update Nix Packages
+
 ```bash
-# Update all Nix packages (recommended method)
+# Recommended: Use the update script (shows changes, commits, runs checks)
 ./update.sh
 
-# Or manually:
-nix flake update
-./sync-hm.sh
+# Or update manually:
+nix flake update        # Update all inputs
+./sync-hm.sh           # Apply changes
 
-# Update Homebrew packages
-brew update && brew upgrade
-brew bundle  # Ensure Brewfile apps are installed
+# Update specific input only:
+nix flake lock --update-input nixpkgs
 ```
+
+#### Update Homebrew Packages (macOS)
+
+```bash
+# Update package definitions
+brew update
+
+# Upgrade all installed packages
+brew upgrade
+
+# Ensure Brewfile apps are installed
+brew bundle
+```
+
+**Tip:** See the [Maintenance Schedule](#maintenance-schedule) section for recommended update frequency (weekly for most
+users).
 
 ### Adding New Tools
 

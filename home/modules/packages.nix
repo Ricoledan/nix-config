@@ -13,7 +13,8 @@ with pkgs.lib;
     tmux
 
     # Development Tools
-    vscode
+    # Note: VSCode is managed by Homebrew on macOS
+    # See DECISIONS.md for details
 
     # Container & DevOps
     # Note: Podman and podman-compose are managed by Homebrew on macOS
