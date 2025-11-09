@@ -23,6 +23,7 @@ cask "nikitabobko/tap/aerospace"
 cask "scrivener"
 cask "obs"
 cask "insomnia"
+cask "todoist-app"
 
 mas "Bear", id: 1091189122
 mas "CleanMyMac", id: 1339170533

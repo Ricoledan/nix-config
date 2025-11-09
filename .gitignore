@@ -3,3 +3,4 @@ result
 result-*
 .env
 .env.local
+.claude/*.local.json
