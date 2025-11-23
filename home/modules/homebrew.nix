@@ -36,7 +36,7 @@ lib.mkIf pkgs.stdenv.isDarwin {
   };
 
   # Shell integration for Homebrew
-  programs.zsh.initExtra = lib.mkBefore ''
+  programs.zsh.initContent = lib.mkBefore ''
     # Homebrew shell integration
     if [[ -f "/opt/homebrew/bin/brew" ]]; then
       eval "$(/opt/homebrew/bin/brew shellenv)"

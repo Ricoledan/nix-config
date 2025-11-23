@@ -20,7 +20,7 @@
     ];
 
     # Linux-specific shell configuration
-    programs.zsh.initExtra = lib.mkAfter ''
+    programs.zsh.initContent = lib.mkAfter ''
       # Linux-specific zsh configuration
 
       # Set up ssh-agent if not already running

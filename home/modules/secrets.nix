@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  programs.zsh.initExtra = lib.mkAfter ''
+  programs.zsh.initContent = lib.mkAfter ''
     # Load secrets from 1Password
     load_secrets() {
       if command -v op &> /dev/null && op account get &>/dev/null; then

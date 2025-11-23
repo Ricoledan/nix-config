@@ -4,12 +4,14 @@
   programs.git = {
     enable = true;
 
-    # User configuration - will be overridden by git config if already set
-    userName = lib.mkDefault "Rico Oledan";
-    userEmail = lib.mkDefault "rico@example.com"; # Update with your email
+    # Git settings (new unified format)
+    settings = {
+      # User configuration - will be overridden by git config if already set
+      user = {
+        name = lib.mkDefault "Rico Oledan";
+        email = lib.mkDefault "rico@example.com"; # Update with your email
+      };
 
-    # Core git settings
-    extraConfig = {
       init.defaultBranch = "main";
 
       core = {
@@ -48,51 +50,51 @@
           syntax-theme = "Dracula";
         };
       };
-    };
 
-    # Git aliases
-    aliases = {
-      # Status and info
-      st = "status";
-      s = "status -s";
+      # Git aliases
+      alias = {
+        # Status and info
+        st = "status";
+        s = "status -s";
 
-      # Committing
-      c = "commit";
-      cm = "commit -m";
-      ca = "commit --amend";
-      can = "commit --amend --no-edit";
+        # Committing
+        c = "commit";
+        cm = "commit -m";
+        ca = "commit --amend";
+        can = "commit --amend --no-edit";
 
-      # Branching
-      br = "branch";
-      co = "checkout";
-      cob = "checkout -b";
+        # Branching
+        br = "branch";
+        co = "checkout";
+        cob = "checkout -b";
 
-      # Pushing/Pulling
-      p = "push";
-      pf = "push --force-with-lease";
-      pl = "pull";
+        # Pushing/Pulling
+        p = "push";
+        pf = "push --force-with-lease";
+        pl = "pull";
 
-      # Logging
-      lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-      lga = "log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-      last = "log -1 HEAD";
+        # Logging
+        lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+        lga = "log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+        last = "log -1 HEAD";
 
-      # Diffing
-      d = "diff";
-      dc = "diff --cached";
-      ds = "diff --staged";
+        # Diffing
+        d = "diff";
+        dc = "diff --cached";
+        ds = "diff --staged";
 
-      # Stashing
-      ss = "stash save";
-      sp = "stash pop";
-      sl = "stash list";
+        # Stashing
+        ss = "stash save";
+        sp = "stash pop";
+        sl = "stash list";
 
-      # Reset
-      unstage = "reset HEAD --";
-      undo = "reset --soft HEAD~1";
+        # Reset
+        unstage = "reset HEAD --";
+        undo = "reset --soft HEAD~1";
 
-      # Clean
-      cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d";
+        # Clean
+        cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d";
+      };
     };
 
     # Ignore global patterns
