@@ -26,5 +26,5 @@ cask "insomnia"
 cask "todoist-app"
 cask "visual-studio-code"
 
-mas "Bear", id: 1091189122
+# mas "Bear", id: 1091189122  # Temporarily disabled - Mac App Store connection issue
 mas "CleanMyMac", id: 1339170533

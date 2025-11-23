@@ -74,15 +74,14 @@
         eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
       ''
 
+      # Run fastfetch after everything else is loaded (including p10k)
+      (lib.mkAfter ''
+        # Run fastfetch on startup (only for first shell level)
+        if [[ $SHLVL -eq 1 ]]; then
+          ${pkgs.fastfetch}/bin/fastfetch
+        fi
+      '')
     ];
-
-    # Run commands on login shell (after P10k instant prompt)
-    loginExtra = ''
-      # Run fastfetch on startup
-      if [[ $SHLVL -eq 1 ]]; then
-        ${pkgs.fastfetch}/bin/fastfetch
-      fi
-    '';
 
     # History configuration
     history = {
