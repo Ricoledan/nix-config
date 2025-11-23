@@ -12,10 +12,6 @@ with pkgs.lib;
     zoxide
     tmux
 
-    # Development Tools
-    # Note: VSCode is managed by Homebrew on macOS
-    # See DECISIONS.md for details
-
     # Container & DevOps
     # Note: Podman and podman-compose are managed by Homebrew on macOS
     # See docs/podman.md for details
