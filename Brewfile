@@ -13,7 +13,7 @@ cask "discord"
 cask "zen"
 cask "plex"
 cask "obsidian"
-cask "stolendata-mpv"
+cask "iina"
 cask "1password"
 cask "fantastical"
 cask "notion"
@@ -25,6 +25,7 @@ cask "obs"
 cask "insomnia"
 cask "todoist-app"
 cask "visual-studio-code"
+cask "tailscale"
 
 # mas "Bear", id: 1091189122  # Temporarily disabled - Mac App Store connection issue
 mas "CleanMyMac", id: 1339170533
