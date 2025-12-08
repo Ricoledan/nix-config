@@ -1,0 +1,5 @@
+## Outdated Homebrew packages:
+git (2.50.1) < 2.52.0
+libpng (1.6.51) < 1.6.53
+python@3.13 (3.13.9_1) < 3.13.11
+python@3.14 (3.14.0_1) < 3.14.2
