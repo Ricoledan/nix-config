@@ -7,9 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager }:
+  outputs = { self, nixpkgs, home-manager, zen-browser }:
     let
       systems = [ "aarch64-darwin" "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
@@ -51,16 +55,21 @@
       # Create a generic homeConfiguration that works for any user
       homeConfigurations =
         let
-          mkHomeConfig = system: home-manager.lib.homeManagerConfiguration {
-            pkgs = pkgsFor system;
-            modules = [
-              ./home/home.nix
-            ];
-            # Allow passing username and homeDirectory at runtime
-            extraSpecialArgs = {
-              inherit system;
+          mkHomeConfig = system:
+            let
+              # Only pass zen-browser to Linux systems
+              extraArgs = if system == "x86_64-linux"
+                then { inherit system; zen-browser = zen-browser.packages.${system}.default; }
+                else { inherit system; zen-browser = null; };
+            in
+            home-manager.lib.homeManagerConfiguration {
+              pkgs = pkgsFor system;
+              modules = [
+                ./home/home.nix
+              ];
+              # Allow passing username and homeDirectory at runtime
+              extraSpecialArgs = extraArgs;
             };
-          };
         in
         {
           # Generic configurations for each system

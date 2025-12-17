@@ -43,6 +43,35 @@ Use Homebrew to manage Podman, podman-compose, and Podman Desktop on macOS while
 
 ---
 
+### 2025-12-17: Use Nix for Podman on Linux
+
+**Status**: Accepted
+
+**Context**:
+
+- Podman is managed via Homebrew on macOS due to integration issues (see above decision)
+- On Linux, the Nix podman package works correctly without the limitations present on macOS
+- The repository's core principle is "Nix-first" for cross-platform tools
+- Zsh configuration sets `DOCKER_HOST` to the podman socket on all platforms
+
+**Decision**:
+Use Nix to manage Podman on Linux while continuing to use Homebrew for macOS.
+
+**Consequences**:
+
+- ✅ Follows "Nix-first" principle where possible
+- ✅ Full reproducibility on Linux via Nix
+- ✅ No special integration workarounds needed on Linux
+- ✅ Consistent container tooling across both platforms (same binary, different installation method)
+- ❌ Split package management between platforms (expected trade-off)
+
+**Implementation**:
+- Podman added to Linux-specific packages in `home/modules/platform/linux.nix`
+- macOS continues to use Homebrew (Brewfile)
+- Both platforms use the same zsh configuration with DOCKER_HOST set to podman socket
+
+---
+
 ### 2025-11-09: Use Homebrew for VSCode on macOS
 
 **Status**: Accepted
