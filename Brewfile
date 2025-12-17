@@ -1,5 +1,6 @@
 brew "mas"
 brew "direnv"
+brew "ollama"
 
 brew "podman"
 brew "podman-compose"
