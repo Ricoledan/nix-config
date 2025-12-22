@@ -73,14 +73,6 @@
         # Initialize Zoxide
         eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
       ''
-
-      # Run fastfetch after everything else is loaded (including p10k)
-      (lib.mkAfter ''
-        # Run fastfetch on startup (only for first shell level)
-        if [[ $SHLVL -eq 1 ]]; then
-          ${pkgs.fastfetch}/bin/fastfetch
-        fi
-      '')
     ];
 
     # History configuration
@@ -119,7 +111,6 @@
   # Additional packages needed for the zsh config
   home.packages = with pkgs; [
     zsh-powerlevel10k
-    fastfetch
     zoxide
   ];
 
