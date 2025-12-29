@@ -1,0 +1,9 @@
+## Current versions:
+- home-manager: 3d6c1c8f
+- nixpkgs: 878e468e
+- zen-browser: 227e836e
+
+## New versions:
+- home-manager: 7a7b43c7
+- nixpkgs: 5c2bc52f
+- zen-browser: 2f61341b
